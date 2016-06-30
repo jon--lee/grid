@@ -1,0 +1,12 @@
+*.swp
+/gridnet
+/Net
+*.p
+*.pyc
+*.txt
+/images
+/videos
+*.png
+supervised.py
+*.npy
+qnet/
