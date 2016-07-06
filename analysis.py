@@ -1,5 +1,5 @@
-from svm import LinearSVM
-from net import Net
+#from svm import LinearSVM
+#from net import Net
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
@@ -88,7 +88,7 @@ class Analysis():
         if names is None:
             names = ['Sup']        
             #names = ['NN_Supervise','LOG_Supervisor']
-        plt.legend(names,loc='upper right')
+        plt.legend(names,loc='upper center',prop={'size':10}, bbox_to_anchor=(.5, 1.12), fancybox=False, ncol=len(names))
 
         font = {'family' : 'normal',
                 'weight' : 'bold',
@@ -101,7 +101,7 @@ class Analysis():
             #axes.set_ylim([-60, 100])
         
         if filename is not None:
-            plt.savefig(filename)
+            plt.savefig(filename, format='eps', dpi=1000)
         #plt.show()
         plt.show(block=False)
         plt.close()
@@ -196,7 +196,7 @@ class Analysis():
 
     def plot_save(self, name, weights=None, color='density'):
         self.plot_setup(weights, color)
-        plt.savefig(name)
+        plt.savefig(name, format='eps', dpi=1000)
 
     def save_states(self, name):
         self.plot_save(name)

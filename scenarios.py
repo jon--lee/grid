@@ -49,5 +49,44 @@ scenario5 = {
 }
 
 
+scenario6 = {
+    'rewards':  [State(14, 14, 14, 14)],
+    'sinks':    [
+                State(14, 14, 13, 14), State(14, 13, 14, 14), State(13, 14, 14, 14),
+                State(13, 13, 13, 13), State(12, 13, 13, 13), State(13, 12, 13, 13), State(13, 13, 12, 13),
+                State(13, 13, 13, 12), State(12, 12, 12, 12), State(12, 12, 13, 13), State(12, 13, 12, 13),
+                State(12, 13, 13, 12), State(13, 12, 12, 13), State(13, 12, 13, 12), State(13, 13, 12, 12), # surrounding
+                State(7, 7, 7, 7), State(8, 8, 8, 8), State(7, 8, 8, 8), State(8, 7, 8, 8), State(8, 8, 7, 8),
+                State(8, 8, 8, 7)]  # middle
+}
 
 
+
+def horizontal(n, m, y):
+    states = [ State(8, i, y, 7) for i in range(n, m) ]
+    return states
+
+def vertical(n, m, x):
+    states = [State(8, x, i, 7) for i in range(n, m) ]
+    return states
+        
+
+def inverse(states):
+    states = [(8, state.pos[1], state.pos[2], 7) for state in states]
+    sinks = []
+    for i in range(15):
+        for j in range(15):
+            for k in range(15):
+                for l in range(15):
+                    if not (i, j, k, l) in states:
+                        sinks.append(State(i, j, k, l))
+    return sinks
+
+
+maze = {
+    'rewards': [ State(8, 6, 12, 7) ],
+    'sinks': inverse(([State(8,0, 0, 7), State(8, 0, 1, 7)] + horizontal(0, 3, 1) + 
+        vertical(1, 5, 2) + horizontal(2, 12, 4) + vertical(4, 9, 11) + horizontal(9, 12, 8)
+        + vertical(8, 13, 9) + horizontal(6, 10, 12)
+        ))
+}

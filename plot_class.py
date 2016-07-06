@@ -1,7 +1,5 @@
-from svm import LinearSVM
 #from net import Net
 from mpl_toolkits.mplot3d import Axes3D
-#from policy import SVMPolicy,NetPolicy
 import numpy as np
 import matplotlib.pyplot as plt
 import IPython

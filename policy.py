@@ -6,7 +6,7 @@ class Action():
         return
 
 class Policy():
-
+ 
     def __init__(self, grid):
         self.arr = {}
         available_actions = range(grid.dim * 2 + 1)
@@ -20,7 +20,6 @@ class Policy():
         self.arr[tuple(state.pos)] = action
 
 class SKPolicy(Policy):
-
 
     def __init__(self, est):
         self.est = est

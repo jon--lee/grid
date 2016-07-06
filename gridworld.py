@@ -42,7 +42,12 @@ class Grid():
             self.mdp.grid = None
         self.mdp = mdp
         self.mdp.grid = self
-        self.mdp.state = State(*([0]*self.dim))
+        
+        state = np.random.normal(0, 2, self.dim).astype(int)
+        state = np.clip(state, 0, 5)
+        self.mdp.state = State(*list(state))
+        #self.mdp.state = State(*([0]*self.dim))
+        
         self.record_states = [self.mdp.state]
         self.time_steps = 0
 

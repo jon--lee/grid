@@ -7,7 +7,6 @@ class SKEst():
         self.grid = grid
         self.data = []
         self.learner = learner
-        #self.Classifier = Classifier
         
     def add_datum(self, state, action):
         self.data.append((state, action))
@@ -30,7 +29,6 @@ class SKEst():
         for i in range(N):
             x = self.data[i][0].toArray()
             states[i,:] = x
-
         return states
 
 

@@ -2,8 +2,8 @@ from scikit_est import SKEst
 from policy import SKPolicy
 from state import State
 import numpy as np
-class ScikitSupervise():
 
+class ScikitDagger():
     def __init__(self, grid, mdp, super_pi, classifier=None, moves=40):
         self.grid = grid
         self.mdp = mdp
@@ -37,14 +37,15 @@ class ScikitSupervise():
         act_a = self.mdp.pi.get_next(x)
         if sup_a != act_a:
             self.mistakes += 1
-
+            
     def get_loss(self):
         return float(self.mistakes) / float(self.moves)
 
-    def train(self):
+    def retrain(self):
         self.learner.fit()
         self.mdp.pi = SKPolicy(self.learner)
         self.record = False
+
 
     def get_reward(self):
         return np.sum(self.reward)
@@ -60,4 +61,4 @@ class ScikitSupervise():
             x = self.recent_rollout_states[i].toArray()
             states[i, :] = x
         return states
-
+    
