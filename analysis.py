@@ -190,8 +190,8 @@ class Analysis():
 
     def plot_scatter(self,weights=None,color='density'):
         self.plot_setup(weights, color)
-        #plt.show()
-        plt.show(block=False)
+        plt.show()
+        #plt.show(block=False)
         plt.close()
 
     def plot_save(self, name, weights=None, color='density'):

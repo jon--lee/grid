@@ -32,6 +32,20 @@ class State():
             action = index * 2 + lst[index] + 1
             return action
 
+    @property
+    def x(self):
+        if len(self.pos) == 2:
+            return self.pos[0]
+        else:
+            raise Exception
+    
+    @property
+    def y(self):
+        if len(self.pos) == 2:
+            return self.pos[1]
+        else:
+            raise Exception
+
     def difference(self, action):
         """
             Compute difference state based on given action

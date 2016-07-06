@@ -79,7 +79,9 @@ class ClassicMDP():
             if delta < 1e-2:
                 print "Iterations: " + str(i)
                 break
-
+            else:
+                print "Delta: " + str(delta) + " above 1e-2"
+                
         # find actions with current value
         for state in self.grid.get_all_states():
             best_action = Action.NONE
