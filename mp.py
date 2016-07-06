@@ -37,46 +37,59 @@ for i in range(SAMP):
     states = list(states) + list(sup.get_recent_rollout_states())
     reward += sup.get_reward() / float(SAMP)
 
-""""
+
+
+
 #an.count_states(np.array(states))
 #an.show_states()
 print "Avg. reward: " + str(reward)
-T = 80000
+T = 160000
 
-
-a = np.zeros(10)
-print "Original: " + str(a[:2])
-start = time.clock()
-for i in range(T * 2):
-    a[0] += 1
-
-end = time.clock()
-print "Resulting: " + str(list(a)[:2])
-print "Time elapsed" + str(end - start) + '\n'
 
 
 a = np.zeros(10)
 shared_arr = mp.Array(ctypes.c_double, a)
 print "Original: " + str(a[:2])
-def f():
-    for i in range(T):
+def f(t):
+    for i in range(t):
         with shared_arr.get_lock():
             arr = np.frombuffer(shared_arr.get_obj())
-            arr[0] += 1
+            arr = np.reshape(arr, (2,5))
+            arr[0,0] += 1
 
 
-p = Process(target=f, args=())
-p2 = Process(target=f, args=())
+p = Process(target=f, args=(T,))
+p2 = Process(target=f, args=(T,))
+p4 = Process(target=f, args=(T,))
+p5 = Process(target=f, args=(T,))
+p6 = Process(target=f, args=(T,))
 start = time.clock()
+
 p.start()
 p2.start()
+p4.start()
+p5.start()
+p6.start()
 
 p.join()
 p2.join()
+p4.join()
+p5.join()
+p6.join()
+
 end = time.clock()
 print "Resulting: " + str(list(shared_arr)[:2])
 print "Time elapsed: " + str(end - start) + ' \n'
 
 
+a = np.zeros(10)
+shared_arr = mp.Array(ctypes.c_double, a)
+print "Original: " + str(a[:2])
+p3=  Process(target=f, args=(T * 5,))
+start = time.clock()
+p3.start()
+p3.join()
 
-"""
+end = time.clock()
+print "Resulting: " + str(list(shared_arr)[:2])
+print "Time elapsed: " + str(end - start) + '\n'
