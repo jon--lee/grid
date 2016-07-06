@@ -46,7 +46,7 @@ class TestTest(BaseTest):
             
 
     def vanilla_dagger(self):
-        mdp = ClassicMDP(ClassicPolicy(self.grid), self.grid)
+        mdp = ClassicMDP(Policy(self.grid), self.grid)
         #mdp.value_iteration()
         #mdp.save_policy(self.policy)
         mdp.load_policy(self.policy)
@@ -74,7 +74,7 @@ class TestTest(BaseTest):
         return dagger_data, dagger_acc, dagger_loss
 
     def boosted_supervise(self):
-        mdp = ClassicMDP(ClassicPolicy(self.grid), self.grid)
+        mdp = ClassicMDP(Policy(self.grid), self.grid)
         #mdp.value_iteration()
         #mdp.save_policy(self.policy)
         mdp.load_policy(self.policy)
@@ -107,7 +107,7 @@ class TestTest(BaseTest):
         
 
     def boosted_dagger(self):
-        mdp = ClassicMDP(ClassicPolicy(self.grid), self.grid)
+        mdp = ClassicMDP(Policy(self.grid), self.grid)
         #mdp.value_iteration()
         #mdp.save_policy(self.policy)
         mdp.load_policy(self.policy)
@@ -147,7 +147,10 @@ class TestTest(BaseTest):
         
 
         self.plotter = plot_class.Plotter()
-        scen = scenarios.maze
+        scen = scenarios.maze4
+
+        H = 15
+        W = 15
 
         rewards = scen['rewards']
         sinks = scen['sinks']

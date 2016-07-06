@@ -61,17 +61,50 @@ scenario6 = {
 }
 
 
-
 def horizontal(n, m, y):
-    states = [ State(8, i, y, 7) for i in range(n, m) ]
+    states = [ State(i, y) for i in range(n, m) ]
     return states
 
 def vertical(n, m, x):
-    states = [State(8, x, i, 7) for i in range(n, m) ]
+    states = [State(x, i) for i in range(n, m) ]
     return states
         
 
 def inverse(states):
+    print "initial: " + str(len(states))
+    states = [(state.pos[0], state.pos[1]) for state in states]
+    sinks = []
+    for i in range(15):
+        for j in range(15):
+            if not (i, j) in states:
+                sinks.append(State(i, j))
+    print "final: " + str(15 * 15  - len(sinks))
+    return sinks
+
+
+maze2 = {
+    'rewards': [ State(6, 12) ],
+    'sinks': inverse(([State(0, 0), State(0, 1)] + horizontal(0, 3, 1) + 
+        vertical(1, 5, 2) + horizontal(2, 12, 4) + vertical(4, 9, 11) + horizontal(9, 12, 8)
+        + vertical(8, 13, 9) + horizontal(6, 10, 12)
+        ))
+}
+
+
+
+
+
+
+def horizontal4(n, m, y):
+    states = [ State(8, i, y, 7) for i in range(n, m) ]
+    return states
+
+def vertical4(n, m, x):
+    states = [State(8, x, i, 7) for i in range(n, m) ]
+    return states
+        
+
+def inverse4(states):
     states = [(8, state.pos[1], state.pos[2], 7) for state in states]
     sinks = []
     for i in range(15):
@@ -83,10 +116,10 @@ def inverse(states):
     return sinks
 
 
-maze = {
+maze4 = {
     'rewards': [ State(8, 6, 12, 7) ],
-    'sinks': inverse(([State(8,0, 0, 7), State(8, 0, 1, 7)] + horizontal(0, 3, 1) + 
-        vertical(1, 5, 2) + horizontal(2, 12, 4) + vertical(4, 9, 11) + horizontal(9, 12, 8)
-        + vertical(8, 13, 9) + horizontal(6, 10, 12)
+    'sinks': inverse4(([State(8,0, 0, 7), State(8, 0, 1, 7)] + horizontal4(0, 3, 1) + 
+        vertical4(1, 5, 2) + horizontal4(2, 12, 4) + vertical4(4, 9, 11) + horizontal4(9, 12, 8)
+        + vertical4(8, 13, 9) + horizontal4(6, 10, 12)
         ))
 }
