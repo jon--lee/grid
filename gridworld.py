@@ -19,8 +19,11 @@ class Grid():
         self.time_steps = 0
         self.record_states = [] # list of states
         
-        self.reward_states = self.get_reward_states()
-        self.sink_states = self.get_sink_states()
+        self._reward_states = self.get_reward_states()
+        self._sink_states = self.get_sink_states()
+
+        self._list_reward_states = None
+        self._list_sink_states = None
 
         return
 
@@ -37,17 +40,36 @@ class Grid():
         """
         return None
 
+    @property
+    def reward_states(self):
+        if self._list_reward_states is None:
+            self._list_reward_states = [State(tup) for tup in self._reward_states.keys()]
+        return self._list_reward_states
+    
+    @property
+    def sink_states(self):
+        if self._list_sink_states is None:
+            self._list_sink_states = [State(tup) for tup in self._sink_states.keys()]
+        return self._list_sink_states
+
+    def set_reward_states(self, rewards):
+        self._reward_states = {}
+        for state in rewards:
+            self._reward_states[tuple(state.pos)] = 1
+
+
+    def set_sink_states(self, sinks):
+        self._sink_states = {}
+        for state in sinks:
+            self._sink_states[tuple(state.pos)] = 1
+
+
     def add_mdp(self, mdp):
         if self.mdp is not None:
             self.mdp.grid = None
         self.mdp = mdp
         self.mdp.grid = self
-        
-        state = np.random.normal(0, 2, self.dim).astype(int)
-        state = np.clip(state, 0, 5)
-        self.mdp.state = State(*list(state))
-        #self.mdp.state = State(*([0]*self.dim))
-        
+        self.mdp.state = State(*([0]*self.dim))
         self.record_states = [self.mdp.state]
         self.time_steps = 0
 
@@ -93,20 +115,30 @@ class Grid():
     def reward(self, state, action, state_prime):
         if not self.is_valid(state_prime):
             state_prime = state
-        if Grid.contains_states(self.reward_states, state_prime):
+        if Grid.contains_states(self._reward_states, state_prime):
             return 10
-        elif Grid.contains_states(self.sink_states, state_prime):
+        elif Grid.contains_states(self._sink_states, state_prime):
             return -10
         else:
-            #return -5.0
+            #return -1.0
             return -.02
 
+    """
     @staticmethod
     def contains_states(states, state):
+        if state in states
         for s in states:
             if s.equals(state):
                 return True
         return False
+    """
+    @staticmethod 
+    def contains_states(states, state):
+        try:
+            states[tuple(state.pos)]
+            return True
+        except:
+            return False
 
     def _draw_rewards(self, size):
         xs = []
@@ -184,6 +216,24 @@ class Grid():
         ranges = [range(d) for d in self.dims]
         for tup in itertools.product(*ranges):
             yield State(*tup)
+
+
+
+
+class HighVarInitStateGrid(Grid): 
+
+    def add_mdp(self, mdp):
+        if self.mdp is not None:
+            self.mdp.grid = None
+        self.mdp = mdp
+        self.mdp.grid = self
+        state = np.random.normal(0, 10, self.dim).astype(int)
+        state = np.clip(state, 0, self.dims[0] - 1)
+        self.mdp.state = State(*list(state))
+        self.record_states = [self.mdp.state]
+        self.time_steps = 0
+        
+
 
 
 """

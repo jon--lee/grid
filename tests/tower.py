@@ -4,13 +4,14 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import AdaBoostClassifier
 import os
 from analysis import Analysis
+import plot_class
 import scenarios
 from gridworld import Grid
 from policy import Policy
 import numpy as np
 from mdp import ClassicMDP
 
-class TestTest(BaseTest):
+class TowerTest(BaseTest):
 
     def vanilla_supervise(self):
         mdp = ClassicMDP(Policy(self.grid), self.grid)
@@ -21,7 +22,7 @@ class TestTest(BaseTest):
 
         value_iter_data =   np.zeros([self.TRIALS, self.ITER])
         classic_il_data =   np.zeros([self.TRIALS, self.ITER])
-        classic_il_acc  =   np.zeros([self.TRIALS, self.ITER])
+        classic_il_acc  =    np.zeros([self.TRIALS, self.ITER])
         classic_il_loss =   np.zeros([self.TRIALS, self.ITER])
 
         for t in range(self.TRIALS):
@@ -80,7 +81,7 @@ class TestTest(BaseTest):
             print "Boosted IL Trial: " + str(t)
             mdp.load_policy(self.policy)
             dt = DecisionTreeClassifier(max_depth=self.DEPTH)
-            boost = AdaBoostClassifier(dt, n_estimators=5)
+            boost = AdaBoostClassifier(dt, n_estimators=50)
             value_iter_r, classic_il_r, acc, loss = self.supervise_trial(mdp, boost)
             
             value_iter_data[t,:] = value_iter_r            
@@ -108,7 +109,7 @@ class TestTest(BaseTest):
             print "Boosted DAgger Trial: " + str(t)
             mdp.load_policy(self.policy)            
             dt = DecisionTreeClassifier(max_depth=self.DEPTH)
-            boost = AdaBoostClassifier(dt, n_estimators=5)
+            boost = AdaBoostClassifier(dt, n_estimators=50)
             r, acc, loss = self.dagger_trial(mdp, boost)
             
             dagger_data[t,:] = r
@@ -127,18 +128,19 @@ class TestTest(BaseTest):
             os.makedirs(self.comparisons_directory)
         if not os.path.exists(self.data_directory):
             os.makedirs(self.data_directory)
+        
+
+        scen = scenarios.tower
 
         H = 15
         W = 15
 
-        scen = scenarios.maze2
-
         rewards = scen['rewards']
         sinks = scen['sinks']
-        self.grid = Grid(15, 15)
+        self.grid = Grid(15, 15, 15)
         self.grid.set_reward_states(rewards)
         self.grid.set_sink_states(sinks)
-        self.policy = 'policies/maze2.p'
+        self.policy = 'policies/tower.p'
     
         value_iter_data, classic_il_data, classic_il_acc, classic_il_loss = self.vanilla_supervise()
         dagger_data, dagger_acc, dagger_loss = self.vanilla_dagger()
@@ -196,16 +198,16 @@ class TestTest(BaseTest):
 if __name__ == '__main__':
 
 
-    #ITER = 25
-    #TRIALS = 30
-    #SAMP = 30
-    ITER = 3
-    TRIALS = 2
-    SAMP = 3
+    ITER = 25
+    TRIALS = 30
+    SAMP = 30
+    #ITER = 3
+    #TRIALS = 2
+    #SAMP = 3
     
 
 
-    test = TestTest('maze2', 80, ITER, TRIALS, SAMP)
+    test = TowerTest('tower', 80, ITER, TRIALS, SAMP)
 
     ld_set = [1]
     d_set = [3]
@@ -215,3 +217,4 @@ if __name__ == '__main__':
         print "Param " + str(i) + " of " + str(len(params))
         param = params[i]
         test.run(*param)
+

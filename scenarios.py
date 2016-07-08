@@ -1,4 +1,59 @@
 from state import State
+
+def notch(i):
+    states3D = []
+    states = (vertical(3, 9, 5) + vertical(3, 9, 6) + vertical(3, 9, 7) + vertical(3, 9, 9)
+        + vertical(3, 9, 10) + vertical(3, 9, 11) + vertical(3, 6, 8))
+    for state in states:
+        states3D.append(State(state.pos[0], state.pos[1], i))
+    return states3D
+
+def tower_const():
+    states = []
+    for i in range(15):
+        states += notch(i)
+    return states
+ 
+
+def horizontal(n, m, y):
+    states = [ State(i, y) for i in range(n, m) ]
+    return states
+
+def vertical(n, m, x):
+    states = [State(x, i) for i in range(n, m) ]
+    return states
+        
+
+def inverse(states):
+    states = [(state.pos[0], state.pos[1]) for state in states]
+    sinks = []
+    for i in range(15):
+        for j in range(15):
+            if not (i, j) in states:
+                sinks.append(State(i, j))
+    return sinks
+
+def horizontal4(n, m, y):
+    states = [ State(8, i, y, 7) for i in range(n, m) ]
+    return states
+
+def vertical4(n, m, x):
+    states = [State(8, x, i, 7) for i in range(n, m) ]
+    return states
+        
+
+def inverse4(states):
+    states = [(8, state.pos[1], state.pos[2], 7) for state in states]
+    sinks = []
+    for i in range(15):
+        for j in range(15):
+            for k in range(15):
+                for l in range(15):
+                    if not (i, j, k, l) in states:
+                        sinks.append(State(i, j, k, l))
+    return sinks
+
+
 scenario0 = {
     'rewards': [State(7, 7)],
     'sinks': [State(4, 3)]
@@ -61,25 +116,6 @@ scenario6 = {
 }
 
 
-def horizontal(n, m, y):
-    states = [ State(i, y) for i in range(n, m) ]
-    return states
-
-def vertical(n, m, x):
-    states = [State(x, i) for i in range(n, m) ]
-    return states
-        
-
-def inverse(states):
-    print "initial: " + str(len(states))
-    states = [(state.pos[0], state.pos[1]) for state in states]
-    sinks = []
-    for i in range(15):
-        for j in range(15):
-            if not (i, j) in states:
-                sinks.append(State(i, j))
-    print "final: " + str(15 * 15  - len(sinks))
-    return sinks
 
 
 maze2 = {
@@ -91,35 +127,19 @@ maze2 = {
 }
 
 
-
-
-
-
-def horizontal4(n, m, y):
-    states = [ State(8, i, y, 7) for i in range(n, m) ]
-    return states
-
-def vertical4(n, m, x):
-    states = [State(8, x, i, 7) for i in range(n, m) ]
-    return states
-        
-
-def inverse4(states):
-    states = [(8, state.pos[1], state.pos[2], 7) for state in states]
-    sinks = []
-    for i in range(15):
-        for j in range(15):
-            for k in range(15):
-                for l in range(15):
-                    if not (i, j, k, l) in states:
-                        sinks.append(State(i, j, k, l))
-    return sinks
-
-
 maze4 = {
     'rewards': [ State(8, 6, 12, 7) ],
-    'sinks': inverse4(([State(8,0, 0, 7), State(8, 0, 1, 7)] + horizontal4(0, 3, 1) + 
+    'sinks': inverse4(([State(8, 0, 0, 7), State(8, 0, 1, 7)] + horizontal4(0, 3, 1) + 
         vertical4(1, 5, 2) + horizontal4(2, 12, 4) + vertical4(4, 9, 11) + horizontal4(9, 12, 8)
         + vertical4(8, 13, 9) + horizontal4(6, 10, 12)
         ))
 }
+
+   
+
+tower = {
+    'rewards': [ State(8, 6, 14) ],
+    'sinks': tower_const()
+}
+
+

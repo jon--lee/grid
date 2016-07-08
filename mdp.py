@@ -77,11 +77,14 @@ class ClassicMDP():
                 delta = max(delta, abs(curr_val - new_val))
             i += 1
             if delta < 1e-2:
+            #if delta < 3.0:
                 print "Iterations: " + str(i)
                 break
             else:
                 print "Delta: " + str(delta) + " above 1e-2"
-                
+        
+        pickle.dump(self.values, open('values.p', 'w'))
+
         # find actions with current value
         for state in self.grid.get_all_states():
             best_action = Action.NONE

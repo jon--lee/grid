@@ -11,7 +11,7 @@ from policy import Policy
 import numpy as np
 from mdp import ClassicMDP
 
-class TestTest(BaseTest):
+class MazeTest(BaseTest):
 
     def vanilla_supervise(self):
         mdp = ClassicMDP(Policy(self.grid), self.grid)
@@ -19,8 +19,6 @@ class TestTest(BaseTest):
         mdp.save_policy(self.policy)
         mdp.load_policy(self.policy)
         self.value_iter_pi = mdp.pi
-        self.plotter.plot_state_actions(self.value_iter_pi, rewards = self.grid.reward_states, sinks = self.grid.sink_states,
-                filename=self.comparisons_directory + 'value_iter_state_action.eps')
 
         value_iter_data =   np.zeros([self.TRIALS, self.ITER])
         classic_il_data =   np.zeros([self.TRIALS, self.ITER])
@@ -38,9 +36,6 @@ class TestTest(BaseTest):
             classic_il_acc[t,:] = acc
             classic_il_loss[t,:] = loss
 
-            if t == 0:
-                self.plotter.plot_state_actions(mdp.pi, rewards=self.grid.reward_states, sinks=self.grid.sink_states,
-                        filename=self.comparisons_directory + 'classic_il_state_action.eps')
 
         return value_iter_data, classic_il_data, classic_il_acc, classic_il_loss
             
@@ -67,9 +62,6 @@ class TestTest(BaseTest):
             dagger_acc[t, :] = acc
             dagger_loss[t,:] = loss
     
-            if t == 0:
-                self.plotter.plot_state_actions(mdp.pi, rewards=self.grid.reward_states, sinks=self.grid.sink_states,
-                        filename=self.comparisons_directory + 'dagger_state_action.eps')
     
         return dagger_data, dagger_acc, dagger_loss
 
@@ -79,8 +71,6 @@ class TestTest(BaseTest):
         #mdp.save_policy(self.policy)
         mdp.load_policy(self.policy)
         self.value_iter_pi = mdp.pi
-        self.plotter.plot_state_actions(self.value_iter_pi, rewards = self.grid.reward_states, sinks = self.grid.sink_states,
-                filename=self.comparisons_directory + 'value_iter_state_action.eps')
 
         value_iter_data =   np.zeros([self.TRIALS, self.ITER])
         classic_il_data =   np.zeros([self.TRIALS, self.ITER])
@@ -99,9 +89,6 @@ class TestTest(BaseTest):
             classic_il_acc[t,:] = acc
             classic_il_loss[t,:] = loss
 
-            if t == 0:
-                self.plotter.plot_state_actions(mdp.pi, rewards=self.grid.reward_states, sinks=self.grid.sink_states,
-                        filename=self.comparisons_directory + 'adaboost_state_action.eps')
 
         return classic_il_data, classic_il_acc, classic_il_loss
         
@@ -128,9 +115,6 @@ class TestTest(BaseTest):
             dagger_data[t,:] = r
             dagger_acc[t, :] = acc
             dagger_loss[t,:] = loss
-            if t == 0:
-                self.plotter.plot_state_actions(mdp.pi, rewards=self.grid.reward_states, sinks=self.grid.sink_states,
-                        filename=self.comparisons_directory + 'adadagger_state_action.eps')
     
         return dagger_data, dagger_acc, dagger_loss
 
@@ -146,7 +130,6 @@ class TestTest(BaseTest):
             os.makedirs(self.data_directory)
         
 
-        self.plotter = plot_class.Plotter()
         scen = scenarios.maze4
 
         H = 15
@@ -155,8 +138,8 @@ class TestTest(BaseTest):
         rewards = scen['rewards']
         sinks = scen['sinks']
         self.grid = Grid(15, 15, 15, 15)
-        self.grid.reward_states = rewards
-        self.grid.sink_states = sinks
+        self.grid.set_reward_states(rewards)
+        self.grid.set_sink_states(sinks)
         self.policy = 'policies/maze.p'
     
         value_iter_data, classic_il_data, classic_il_acc, classic_il_loss = self.vanilla_supervise()
@@ -215,16 +198,16 @@ class TestTest(BaseTest):
 if __name__ == '__main__':
 
 
-    #ITER = 25
-    #TRIALS = 30
-    #SAMP = 30
-    ITER = 3
-    TRIALS = 2
-    SAMP = 3
+    ITER = 25
+    TRIALS = 30
+    SAMP = 30
+    #ITER = 3
+    #TRIALS = 2
+    #SAMP = 3
     
 
 
-    test = TestTest('maze', 80, ITER, TRIALS, SAMP)
+    test = MazeTest('maze', 80, ITER, TRIALS, SAMP)
 
     ld_set = [1]
     d_set = [3]

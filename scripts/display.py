@@ -1,31 +1,62 @@
 import numpy as np
 from analysis import Analysis
-ITER = 40
-rewards = None
-sinks = None
-data_directory = 'comparisons/boost_4dim_dt_full_data/'
-comparisons_directory = 'comparisons/boost_4dim_dt_full_comparison/'
+import scenarios
+from gridworld import Grid
+H = 15
+W = 15
+ITER = 25
+
+rewards = scenarios.tower['rewards']
+sinks = scenarios.tower['sinks']
+grid = Grid(H, W)
+grid.reward_states = rewards
+grid.sink_states = sinks
 
 
-value_iter_data = np.load(data_directory + '4dim_boost_dt_full_sup_data.npy')
-classic_il_data = np.load(data_directory + '4dim_boost_dt_full_classic_il_data.npy')
-dagger_data = np.load(data_directory + '4dim_boost_dt_full_dagger_data.npy')
+comparisons_directory = 'comparisons/towerhvis2_1ld_3d_comparisons/'
+hv_dir = 'comparisons/towerhvis2_1ld_3d_data/'
 
-dagger_acc = np.load(data_directory + '4dim_boost_dt_full_dagger_acc.npy')
-classic_il_acc = np.load(data_directory + '4dim_boost_dt_full_classic_il_acc.npy')
+value_iter_data = np.load(hv_dir + 'sup_data.npy')
+classic_il_data = np.load(hv_dir + 'classic_il_data.npy')
+dagger_data = np.load(hv_dir + 'dagger_data.npy')
+ada_data = np.load(hv_dir + 'ada_data.npy')
+adadagger_data = np.load(hv_dir + 'adadagger_data.npy')
 
-analysis = Analysis(15, 15, ITER, rewards=rewards, sinks=sinks, desc="General reward comparison")
 
+classic_il_acc = np.load(hv_dir + 'classic_il_acc.npy')
+dagger_acc = np.load(hv_dir + 'dagger_acc.npy')
+ada_acc = np.load(hv_dir + 'ada_acc.npy')
+adadagger_acc = np.load(hv_dir + 'adadagger_acc.npy')
+
+
+classic_il_loss = np.load(hv_dir + 'classic_il_loss.npy')
+dagger_loss = np.load(hv_dir + 'dagger_loss.npy')
+ada_loss = np.load(hv_dir + 'ada_loss.npy')
+adadagger_loss = np.load(hv_dir + 'adadagger_loss.npy')
+
+analysis = Analysis(H, W, ITER, rewards=rewards, sinks=sinks, desc="General comparison")
 analysis.get_perf(value_iter_data)
 analysis.get_perf(classic_il_data)
 analysis.get_perf(dagger_data)
-analysis.plot(names=['Value Iteration', 'DT IL', 'DT DAgger'], ylims=[0, 120])
-        #filename=comparisons_directory+'boost_dim_dt_full_reward_comparison.png', ylims=[-60, 100])
+analysis.get_perf(ada_data)
+analysis.get_perf(adadagger_data)
 
-acc_analysis = Analysis(15, 15, ITER, rewards = rewards, sinks=sinks, desc='Accuracy comparison')
+analysis.plot(names = ['Value iter', 'Supervised', 'DAgger', 'Adaboost Supervised', 'Adaboost DAgger'], filename=comparisons_directory + 'reward_comparison.eps')#, ylims=[-50, 110])
+
+acc_analysis = Analysis(H, W, ITER, rewards = grid.reward_states, sinks=grid.sink_states, desc="Accuracy comparison")
 acc_analysis.get_perf(classic_il_acc)
 acc_analysis.get_perf(dagger_acc)
-acc_analysis.plot(names = ['DT IL Acc.', 'DT DAgger Acc.'], label='Accuracy', ylims=[0, 1])
-        #filename=comparisons_directory+'boost_4dim_dt_full_acc_comparison.png', ylims=[0,1])
+acc_analysis.get_perf(ada_acc)
+acc_analysis.get_perf(adadagger_acc)
+
+acc_analysis.plot(names = ['Supervised Acc.', 'DAgger Acc.', 'Adaboost Acc.', 'Adaboost DAgger Acc.'], label='Accuracy', filename=comparisons_directory + 'acc_comparison.eps', ylims=[0,1])
+
+loss_analysis = Analysis(H, W, ITER, rewards=rewards, sinks=sinks, desc="Loss plot")
+loss_analysis.get_perf(classic_il_loss)
+loss_analysis.get_perf(dagger_loss)
+loss_analysis.get_perf(ada_loss)
+loss_analysis.get_perf(adadagger_loss)
+
+loss_analysis.plot(names = ['Supervised loss', 'DAgger loss', 'Adaboost loss', 'Adaboost DAgger loss'], label='Loss', filename=comparisons_directory + 'loss_plot.eps', ylims=[0, 1])
 
 
