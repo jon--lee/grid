@@ -31,7 +31,7 @@ class ScikitSupervise():
 
             self.reward[t] = self.grid.reward(x_t, a_t, x_t_1)
             self.recent_rollout_states.append(self.mdp.state)
-
+        #print self.mdp.state
     def compare_policies(self, x):
         sup_a = self.super_pi.get_next(x)
         act_a = self.mdp.pi.get_next(x)

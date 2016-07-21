@@ -36,7 +36,7 @@ class Analysis():
         n = data.shape[0]
         return np.sum(data)/n
 
-    def get_perf(self,data):
+    def get_perf(self,data, color=None):
         #SAve each mean and err at the end
         iters = data.shape[1]
         mean = np.zeros(iters)
@@ -47,8 +47,11 @@ class Analysis():
             mean[i] = self.compute_m(data[:,i]) # for iteration i, compute mean reward across trials
             x[i] = i
             err[i] = self.compute_std_er_m(data[:,i])
-        
-        plt.errorbar(x,mean,yerr=err,linewidth=5.0)
+        if color is None:
+            plt.errorbar(x,mean,yerr=err,linewidth=5.0)
+        else:
+            plt.errorbar(x,mean,yerr=err,linewidth=5.0, color=color)
+
     
         self.mean = mean
         self.err = err
