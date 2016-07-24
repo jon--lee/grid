@@ -214,7 +214,7 @@ if __name__ == '__main__':
     #SAMP = 2
     
 
-    for i in range(50):
+    for i in range(100):
         rewards, sinks = random_scen.random_scen(1, 585, [15, 15, 15])
         scen = {'rewards': rewards,
                 'sinks': sinks}
