@@ -179,7 +179,7 @@ class ClassicTest(BaseTest):
         #analysis.get_perf(ada_data)
         #analysis.get_perf(adadagger_data)
 
-        analysis.plot(names = ['Value iteration', 'DT IL', 'DT DAgger', 'Adaboost IL', 'Adaboost DAgger'], filename=self.comparisons_directory + 'reward_comparison.eps', ylims=[-60, 100])
+        analysis.plot(names = ['Value iteration', 'DT IL', 'DT DAgger', 'Adaboost IL', 'Adaboost DAgger'], filename=self.comparisons_directory + 'reward_comparison.eps')#, ylims=[-60, 100])
 
         acc_analysis = Analysis(H, W, self.ITER, rewards = self.grid.reward_states, sinks=self.grid.sink_states, desc="Accuracy comparison")
         acc_analysis.get_perf(classic_il_acc)
