@@ -217,13 +217,6 @@ if __name__ == '__main__':
     #TRIALS = 1
     #SAMP = 2
     
-    """
-    for i in range(2):
-        rewards, sinks = random_scen.random_scen(1, 585, [15, 15, 15])
-        scen = {'rewards': rewards,
-                'sinks': sinks}
-        random_scen.save3d(scen)
-    """
 
     #test = RandomTest('random/random', 80, ITER, TRIALS, SAMP)
 
