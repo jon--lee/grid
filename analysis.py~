@@ -107,8 +107,6 @@ class Analysis():
         #plt.show()
         plt.ioff()
         plt.clf()
-        plt.cla()
-        plt.close()
         #plt.show(block=False)
         #plt.close()
 

@@ -36,6 +36,7 @@ class RandomTest(BaseTest):
 
         for t in range(self.TRIALS):
             print "IL Trial: " + str(t)
+            print "*** DO NOT TERMINATE THIS PROGRAM"
             mdp.load_policy(self.policy)
             dt = DecisionTreeClassifier(max_depth=self.DEPTH)
             value_iter_r, classic_il_r, acc, loss = self.supervise_trial(mdp, dt)
@@ -63,6 +64,7 @@ class RandomTest(BaseTest):
 
         for t in range(self.TRIALS):
             print "DAgger Trial: " + str(t)
+            print "***DO NOT TERMINATE THIS PROGRAM***"
             mdp.load_policy(self.policy)            
             dt = DecisionTreeClassifier(max_depth=self.DEPTH)
             r, acc, loss = self.dagger_trial(mdp, dt)
@@ -88,6 +90,7 @@ class RandomTest(BaseTest):
 
         for t in range(self.TRIALS):
             print "Boosted IL Trial: " + str(t)
+            print "***DO NOT TERMINATE THIS PROGRAM***"
             mdp.load_policy(self.policy)
             dt = DecisionTreeClassifier(max_depth=self.DEPTH)
             boost = AdaBoostClassifier(dt, n_estimators=50)
@@ -116,6 +119,7 @@ class RandomTest(BaseTest):
 
         for t in range(self.TRIALS):
             print "Boosted DAgger Trial: " + str(t)
+            print "***DO NOT TERMINATE THIS PROGRAM***"
             mdp.load_policy(self.policy)            
             dt = DecisionTreeClassifier(max_depth=self.DEPTH)
             boost = AdaBoostClassifier(dt, n_estimators=50)
@@ -213,13 +217,13 @@ if __name__ == '__main__':
     #TRIALS = 1
     #SAMP = 2
     
-
-    for i in range(50):
+    """
+    for i in range(2):
         rewards, sinks = random_scen.random_scen(1, 585, [15, 15, 15])
         scen = {'rewards': rewards,
                 'sinks': sinks}
         random_scen.save3d(scen)
-
+    """
 
     #test = RandomTest('random/random', 80, ITER, TRIALS, SAMP)
 
