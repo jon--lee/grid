@@ -133,15 +133,19 @@ class RandomTest(BaseTest):
 
 
 
-    def run(self, LIMIT_DATA, DEPTH, scen):
+    def run(self, LIMIT_DATA, DEPTH, MOVES, scen):
         self.LIMIT_DATA = LIMIT_DATA
         self.DEPTH = DEPTH
-        self.comparisons_directory, self.data_directory = self.make_dirs([LIMIT_DATA, DEPTH], ['ld', 'd'])
+        self.moves = MOVES
+        self.comparisons_directory, self.data_directory = self.make_dirs([LIMIT_DATA, DEPTH, MOVES], ['ld', 'd', 'm'])
         if not os.path.exists(self.comparisons_directory):
             os.makedirs(self.comparisons_directory)
+        else:
+            return
         if not os.path.exists(self.data_directory):
             os.makedirs(self.data_directory)
-        
+        else:
+            return
 
 
         H = 15
@@ -149,7 +153,7 @@ class RandomTest(BaseTest):
 
         rewards = scen['rewards']
         sinks = scen['sinks']
-        self.grid = HighVarInitStateGrid(15, 15, 15)
+        self.grid = Grid(15, 15, 15)
         self.grid.set_reward_states(rewards)
         self.grid.set_sink_states(sinks)
         self.policy = 'policies/random_unreal.p'
@@ -225,9 +229,11 @@ if __name__ == '__main__':
     #test = RandomTest('random/random', 80, ITER, TRIALS, SAMP)
 
     # ld_set = [5]
-    ld_set = [5]
-    d_set = [4]
-    params = list(itertools.product(ld_set, d_set))
+    ld_set = [1, 5, 10]
+    d_set = [2, 3, 4, 5]
+    steps = [45, 50, 55, 60]
+
+    params = list(itertools.product(ld_set, d_set, steps))
 
 
 
@@ -235,7 +241,7 @@ if __name__ == '__main__':
         for filename in sorted(os.listdir('scenarios3d/')):
             if filename.endswith('.p') and filename == 'scen1.p':
                 scenario = random_scen.load('scenarios3d/' + filename)
-                test = RandomTest('random2/' + filename, 50, ITER, TRIALS, SAMP)
+                test = RandomTest('gs_random/' + filename, 50, ITER, TRIALS, SAMP)
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)

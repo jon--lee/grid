@@ -14,7 +14,7 @@ from analysis import Analysis
 import plot_class
 import random
 import scenarios
-from gridworld import HighVarInitStateGrid, Grid
+from gridworld import Grid
 from policy import Policy
 import numpy as np
 from mdp import ClassicMDP
@@ -24,8 +24,8 @@ class RandomTest(BaseTest):
     
     def vanilla_supervise(self):
         mdp = ClassicMDP(Policy(self.grid), self.grid)
-        #mdp.value_iteration()
-        #mdp.save_policy(self.policy)
+        mdp.value_iteration()
+        mdp.save_policy(self.policy)
         mdp.load_policy(self.policy)
         self.value_iter_pi = mdp.pi
 
@@ -36,7 +36,7 @@ class RandomTest(BaseTest):
 
         for t in range(self.TRIALS):
             print "IL Trial: " + str(t)
-            print "*** DO NOT TERMINATE THIS PROGRAM"
+            print "***DO NOT TERMINATE THIS PROGRAM***"
             mdp.load_policy(self.policy)
             dt = DecisionTreeClassifier(max_depth=self.DEPTH)
             value_iter_r, classic_il_r, acc, loss = self.supervise_trial(mdp, dt)
@@ -149,60 +149,57 @@ class RandomTest(BaseTest):
 
         rewards = scen['rewards']
         sinks = scen['sinks']
-        self.grid = HighVarInitStateGrid(15, 15, 15)
+        self.grid = Grid(15, 15)
         self.grid.set_reward_states(rewards)
         self.grid.set_sink_states(sinks)
-        self.policy = 'policies/random_unreal.p'
+        self.policy = 'policies/random2d.p'
     
         value_iter_data, classic_il_data, classic_il_acc, classic_il_loss = self.vanilla_supervise()
         dagger_data, dagger_acc, dagger_loss = self.vanilla_dagger()
-        # ada_data, ada_acc, ada_loss = self.boosted_supervise()
-        # adadagger_data, adadagger_acc, adadagger_loss = self.boosted_dagger()
+        ada_data, ada_acc, ada_loss = self.boosted_supervise()
+        adadagger_data, adadagger_acc, adadagger_loss = self.boosted_dagger()
 
         
         np.save(self.data_directory + 'sup_data.npy', value_iter_data)
         np.save(self.data_directory + 'classic_il_data.npy', classic_il_data)
         np.save(self.data_directory + 'dagger_data.npy', dagger_data)
-        # np.save(self.data_directory + 'ada_data.npy', ada_data)
-        # np.save(self.data_directory + 'adadagger_data.npy', adadagger_data)
+        np.save(self.data_directory + 'ada_data.npy', ada_data)
+        np.save(self.data_directory + 'adadagger_data.npy', adadagger_data)
         
         np.save(self.data_directory + 'dagger_acc.npy', dagger_acc)
         np.save(self.data_directory + 'classic_il_acc.npy', classic_il_acc)
-        # np.save(self.data_directory + 'ada_acc.npy', ada_acc)
-        # np.save(self.data_directory + 'adadagger_acc.npy', adadagger_acc)    
+        np.save(self.data_directory + 'ada_acc.npy', ada_acc)
+        np.save(self.data_directory + 'adadagger_acc.npy', adadagger_acc)    
 
         np.save(self.data_directory + 'dagger_loss.npy', dagger_loss)
         np.save(self.data_directory + 'classic_il_loss.npy', classic_il_loss)
-        # np.save(self.data_directory + 'ada_loss.npy', ada_loss)    
-        # np.save(self.data_directory + 'adadagger_loss.npy', adadagger_loss)    
+        np.save(self.data_directory + 'ada_loss.npy', ada_loss)    
+        np.save(self.data_directory + 'adadagger_loss.npy', adadagger_loss)    
 
         analysis = Analysis(H, W, self.ITER, rewards=rewards, sinks=sinks, desc="General comparison")
         analysis.get_perf(value_iter_data)
         analysis.get_perf(classic_il_data)
         analysis.get_perf(dagger_data)
-        # analysis.get_perf(ada_data, 'c')
-        # analysis.get_perf(adadagger_data, 'm')
+        analysis.get_perf(ada_data, 'c')
+        analysis.get_perf(adadagger_data, 'm')
 
         analysis.plot(names = ['Value iteration', 'Supervise', 'DAgger'], filename=self.comparisons_directory + 'reward_comparison.eps')#, ylims=[-60, 100])
 
         acc_analysis = Analysis(H, W, self.ITER, rewards = self.grid.reward_states, sinks=self.grid.sink_states, desc="Accuracy comparison")
         acc_analysis.get_perf(classic_il_acc)
         acc_analysis.get_perf(dagger_acc)
-        # acc_analysis.get_perf(ada_acc, 'c')
-        # acc_analysis.get_perf(adadagger_acc, 'm')
+        acc_analysis.get_perf(ada_acc, 'c')
+        acc_analysis.get_perf(adadagger_acc, 'm')
 
         acc_analysis.plot(names = ['Supervise Acc.', 'DAgger Acc.'], label='Accuracy', filename=self.comparisons_directory + 'acc_comparison.eps', ylims=[0,1])
         
         loss_analysis = Analysis(H, W, self.ITER, rewards=rewards, sinks=sinks, desc="Loss plot")
         loss_analysis.get_perf(classic_il_loss)
         loss_analysis.get_perf(dagger_loss)
-        # loss_analysis.get_perf(ada_loss, 'c')
-        # loss_analysis.get_perf(adadagger_loss, 'm')    
+        loss_analysis.get_perf(ada_loss, 'c')
+        loss_analysis.get_perf(adadagger_loss, 'm')    
 
         loss_analysis.plot(names = ['Supervise loss', 'DAgger loss'], label='Loss', filename=self.comparisons_directory + 'loss_plot.eps', ylims=[0, 1])
-            
-
-        
 
         return
         
@@ -214,28 +211,27 @@ if __name__ == '__main__':
     # TRIALS = 15
     # SAMP = 15
 
-    ITER = 40
+    ITER = 25
     TRIALS = 30
     SAMP = 15
     #ITER = 2
     #TRIALS = 1
     #SAMP = 2
-    
 
     #test = RandomTest('random/random', 80, ITER, TRIALS, SAMP)
 
     # ld_set = [5]
-    ld_set = [5]
-    d_set = [4]
+    ld_set = [1]
+    d_set = [3]
     params = list(itertools.product(ld_set, d_set))
 
 
 
     for i in range(len(params)):
-        for filename in sorted(os.listdir('scenarios3d/')):
-            if filename.endswith('.p') and filename == 'scen1.p':
-                scenario = random_scen.load('scenarios3d/' + filename)
-                test = RandomTest('random2/' + filename, 50, ITER, TRIALS, SAMP)
+        for filename in sorted(os.listdir('scenarios2d/')):
+            if filename.endswith('.p'):
+                scenario = random_scen.load('scenarios2d/' + filename)
+                test = RandomTest('random2d/' + filename, 40, ITER, TRIALS, SAMP)
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)

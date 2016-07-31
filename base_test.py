@@ -29,9 +29,9 @@ class BaseTest():
         return
 
     def make_dirs(self, args, ids):
-        ld, d = args
-        ld_id, d_id = ids
-        short = 'comparisons/' + str(self.base_name) + '_' + str(ld) + str(ld_id) + '_' + str(d) + str(d_id) + '_'
+        short = 'comparisons/' + str(self.base_name) + '_'
+        for arg, id_ in zip(args, ids):
+            short += str(arg) + str(id_) + '_'
         return short + 'comparisons/', short + 'data/'
 
     def execute(self, value_iter_pi, grid):
