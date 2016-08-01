@@ -24,6 +24,7 @@ class BaseTest():
         self.ITER = ITER
         self.TRIALS = TRIALS
         self.SAMP = SAMP
+        self.INITIAL_RO = None
         self.moves = moves
         self.base_name = base_name
         return
@@ -55,8 +56,16 @@ class BaseTest():
             mdp.pi = self.value_iter_pi
             sup.record = True
             for _ in range(self.SAMP):
-                if _ >= self.LIMIT_DATA:
-                    sup.record = False
+                # hacking initial rollout
+                if self.INITIAL_RO is not None:
+                    if i == 0 and _ >= self.INITIAL_RO:
+                        sup.record=False
+                    elif i != 0 and _ >= self.LIMIT_DATA:
+                        sup.record=False
+                else:
+                    if _ >= self.LIMIT_DATA:
+                        sup.record=False
+                # done hacking initial rollout
                 sup.rollout()
                 value_iter_r[i] += sup.get_reward() / float(self.SAMP)
 
@@ -78,9 +87,15 @@ class BaseTest():
         dagger = ScikitDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves)
         dagger.record = True
         
-        for _ in range(self.LIMIT_DATA):
-            dagger.rollout()
-        
+        # hacking initial rollout
+        if self.INITIAL_RO is None:
+            for _ in range(self.LIMIT_DATA):
+                dagger.rollout()
+        else:
+            for _ in range(self.INITIAL_RO):
+                dagger.rollout()
+        # end hacking
+
         r = np.zeros(self.ITER)
         acc = np.zeros(self.ITER)
         loss = np.zeros(self.ITER)
