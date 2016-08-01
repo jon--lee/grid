@@ -56,6 +56,8 @@ class BaseTest():
             mdp.pi = self.value_iter_pi
             sup.record = True
             for _ in range(self.SAMP):
+                #if _ >= self.LIMIT_DATA:
+                #    sup.record=False
                 # hacking initial rollout
                 if self.INITIAL_RO is not None:
                     if i == 0 and _ >= self.INITIAL_RO:
@@ -87,6 +89,8 @@ class BaseTest():
         dagger = ScikitDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves)
         dagger.record = True
         
+        # for _ in range(self.LIMIT_DATA):
+        #    dagger.rollout()
         # hacking initial rollout
         if self.INITIAL_RO is None:
             for _ in range(self.LIMIT_DATA):
