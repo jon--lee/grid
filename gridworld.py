@@ -233,7 +233,18 @@ class HighVarInitStateGrid(Grid):
         self.record_states = [self.mdp.state]
         self.time_steps = 0
         
-
+class LowVarInitStateGrid(Grid):
+    
+    def add_mdp(self, mdp):
+        if self.mdp is not None:
+            self.mdp.grid = None
+        self.mdp = mdp
+        self.mdp.grid = self
+        state = np.random.normal(0, 5, self.dim).astype(int)
+        state = np.clip(state, 0, self.dims[0] - 1)
+        self.mdp.state = State(*list(state))
+        self.record_states = [self.mdp.state]
+        self.time_steps = 0
 
 
 """
