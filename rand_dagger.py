@@ -152,29 +152,36 @@ class RandomTest(BaseTest):
         self.grid = HighVarInitStateGrid(15, 15, 15)
         self.grid.set_reward_states(rewards)
         self.grid.set_sink_states(sinks)
-        self.policy = 'policies/random.p'
+        self.policy = 'policies/random_unrealizable.p'
     
         value_iter_data, classic_il_data, classic_il_acc, classic_il_loss = self.vanilla_supervise()
         dagger_data, dagger_acc, dagger_loss = self.vanilla_dagger()
-        ada_data, ada_acc, ada_loss = self.boosted_supervise()
-        adadagger_data, adadagger_acc, adadagger_loss = self.boosted_dagger()
+        #ada_data, ada_acc, ada_loss = self.boosted_supervise()
+        #adadagger_data, adadagger_acc, adadagger_loss = self.boosted_dagger()
 
         
         np.save(self.data_directory + 'sup_data.npy', value_iter_data)
         np.save(self.data_directory + 'classic_il_data.npy', classic_il_data)
         np.save(self.data_directory + 'dagger_data.npy', dagger_data)
-        np.save(self.data_directory + 'ada_data.npy', ada_data)
-        np.save(self.data_directory + 'adadagger_data.npy', adadagger_data)
+        # np.save(self.data_directory + 'ada_data.npy', ada_data)
+        # np.save(self.data_directory + 'adadagger_data.npy', adadagger_data)
         
         np.save(self.data_directory + 'dagger_acc.npy', dagger_acc)
         np.save(self.data_directory + 'classic_il_acc.npy', classic_il_acc)
-        np.save(self.data_directory + 'ada_acc.npy', ada_acc)
-        np.save(self.data_directory + 'adadagger_acc.npy', adadagger_acc)    
+        # np.save(self.data_directory + 'ada_acc.npy', ada_acc)
+        # np.save(self.data_directory + 'adadagger_acc.npy', adadagger_acc)    
 
         np.save(self.data_directory + 'dagger_loss.npy', dagger_loss)
         np.save(self.data_directory + 'classic_il_loss.npy', classic_il_loss)
-        np.save(self.data_directory + 'ada_loss.npy', ada_loss)    
-        np.save(self.data_directory + 'adadagger_loss.npy', adadagger_loss)    
+        # np.save(self.data_directory + 'ada_loss.npy', ada_loss)    
+        # np.save(self.data_directory + 'adadagger_loss.npy', adadagger_loss)    
+
+        ada_data = np.load(self.data_directory + 'ada_data.npy')
+        ada_acc = np.load(self.data_directory + 'ada_acc.npy')
+        ada_loss = np.load(self.data_directory + 'ada_loss.npy')
+        adadagger_data = np.load(self.data_directory + 'adadagger_data.npy')
+        adadagger_acc = np.load(self.data_directory + 'adadagger_acc.npy')
+        adadagger_loss = np.load(self.data_directory + 'adadagger_loss.npy')
 
         analysis = Analysis(H, W, self.ITER, rewards=rewards, sinks=sinks, desc="General comparison")
         analysis.get_perf(value_iter_data, 'b')
@@ -183,7 +190,7 @@ class RandomTest(BaseTest):
         analysis.get_perf(ada_data, 'c')
         analysis.get_perf(adadagger_data, 'm')
 
-        analysis.plot(names = ['Value iteration', 'Supervise', 'DAgger' 'Adaboost Supervise', 'Adaboost DAgger'], filename=self.comparisons_directory + 'reward_comparison.eps')#, ylims=[-60, 100])
+        analysis.plot(names = ['Value iteration', 'Supervise', 'DAgger', 'Adaboost Supervise', 'Adaboost DAgger'], filename=self.comparisons_directory + 'reward_comparison.eps')#, ylims=[-60, 100])
 
         acc_analysis = Analysis(H, W, self.ITER, rewards = self.grid.reward_states, sinks=self.grid.sink_states, desc="Accuracy comparison")
         acc_analysis.get_perf(classic_il_acc, 'g')
@@ -213,9 +220,9 @@ if __name__ == '__main__':
     ITER = 25
     TRIALS = 30
     SAMP = 30
-    #ITER = 2
-    #TRIALS = 1
-    #SAMP = 2
+    # ITER = 2
+    # TRIALS = 1
+    # SAMP = 2
     
 
     #test = RandomTest('random/random', 80, ITER, TRIALS, SAMP)
@@ -224,13 +231,14 @@ if __name__ == '__main__':
     d_set = [3]
     params = list(itertools.product(ld_set, d_set))
 
-
+    scen_dir = 'comparisons/random2/used/'
 
     for i in range(len(params)):
-        for filename in os.listdir('scenarios3d/'):
+        for filename in os.listdir(scen_dir):
             if filename.endswith('.p'):
-                scenario = random_scen.load('scenarios3d/' + filename)
-                test = RandomTest('random/' + filename, 80, ITER, TRIALS, SAMP)
+                print "Current analysis on " + str(filename)
+                scenario = random_scen.load(scen_dir + filename)
+                test = RandomTest('random2/' + filename, 80, ITER, TRIALS, SAMP)
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)

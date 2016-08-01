@@ -1,5 +1,5 @@
 import numpy as np
-
+import random
 class Action():
     NONE = 0 
     def __init__(self):
@@ -26,3 +26,13 @@ class SKPolicy(Policy):
 
     def get_next(self, state):
         return self.est.predict([list(state.pos)])
+
+class NoisyPolicy(Policy):
+
+    EPS = 0.2
+
+    def get_next(self, state):
+        if random.random() > NoisyPolicy.EPS:
+            Policy.get_next(self, state)
+        else:
+            return random.choice(state.available_actions)
