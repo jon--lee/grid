@@ -34,6 +34,16 @@ def save3d(scen):
         pickle.dump(scen, f)
     return path
 
+def save2d(scen):
+    i = 0
+    path = 'scenarios2d/scen' + str(i) + '.p'
+    while os.path.exists(path):
+        i += 1
+        path = 'scenarios2d/scen' + str(i) + '.p'
+    with open(path, 'w') as f:
+        pickle.dump(scen, f)
+    return path
+
 def load(path):
     with open(path, 'r') as f:
         return pickle.load(f)
