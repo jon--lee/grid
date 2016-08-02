@@ -236,7 +236,7 @@ if __name__ == '__main__':
 
 
     for i in range(len(params)):
-        test = RandomTest('tower_confirm', 80, ITER, TRIALS, SAMP)
+        test = RandomTest('tower_confirm', 35, ITER, TRIALS, SAMP)
         print "Param " + str(i) + " of " + str(len(params))
         param = list(params[i])
         test.run(*param)
