@@ -29,10 +29,10 @@ class SKPolicy(Policy):
 
 class NoisyPolicy(Policy):
 
-    EPS = 0.2
+    EPS = 0.5
 
     def get_next(self, state):
         if random.random() > NoisyPolicy.EPS:
-            Policy.get_next(self, state)
+            return Policy.get_next(self, state)
         else:
             return random.choice(state.available_actions)
