@@ -66,7 +66,7 @@ class BaseTest():
                 #        sup.record=False
                 #else:
                 #    if _ >= self.LIMIT_DATA:
-                        sup.record=False
+                #        sup.record=False
                 # done hacking initial rollout
                 sup.rollout()
                 value_iter_r[i] += sup.get_reward() / float(self.SAMP)

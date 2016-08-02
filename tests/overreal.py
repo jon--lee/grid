@@ -24,9 +24,10 @@ class RandomTest(BaseTest):
     
     def vanilla_supervise(self):
         mdp = ClassicMDP(Policy(self.grid), self.grid)
-        #mdp.value_iteration()
-        #mdp.save_policy(self.policy)
+        mdp.value_iteration()
+        mdp.save_policy(self.policy)
         mdp.load_policy(self.policy)
+        raise NotImplementedError
         self.value_iter_pi = mdp.pi
 
         value_iter_data =   np.zeros([self.TRIALS, self.ITER])
