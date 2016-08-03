@@ -43,13 +43,13 @@ class Grid():
     @property
     def reward_states(self):
         if self._list_reward_states is None:
-            self._list_reward_states = [State(tup) for tup in self._reward_states.keys()]
+            self._list_reward_states = [State(*tup) for tup in self._reward_states.keys()]
         return self._list_reward_states
     
     @property
     def sink_states(self):
         if self._list_sink_states is None:
-            self._list_sink_states = [State(tup) for tup in self._sink_states.keys()]
+            self._list_sink_states = [State(*tup) for tup in self._sink_states.keys()]
         return self._list_sink_states
 
     def set_reward_states(self, rewards):

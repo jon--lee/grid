@@ -22,6 +22,9 @@ class State():
         return State(*lst)
 
     def get_action(self, dif):
+        """
+            dif is a State that represents a difference between two states
+        """
         lst = dif.pos
         if all(v == 0 for v in lst):
             return State.NONE

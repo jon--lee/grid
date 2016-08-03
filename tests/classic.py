@@ -215,7 +215,7 @@ if __name__ == '__main__':
     
 
 
-    test = ClassicTest('classic', 80, ITER, TRIALS, SAMP)
+    test = ClassicTest('classic', 40, ITER, TRIALS, SAMP)
 
     ld_set = [1]
     d_set = [3]
