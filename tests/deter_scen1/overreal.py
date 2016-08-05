@@ -215,7 +215,7 @@ if __name__ == '__main__':
     # SAMP = 15
 
     ITER = 35
-    TRIALS = 60
+    TRIALS = 30
     SAMP = 15
     #ITER = 2
     #TRIALS = 1
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     # ld_set = [5]
     ld_set = [1]
     d_set = [100]
-    steps = [35]
+    steps = [50]
 
     params = list(itertools.product(ld_set, d_set, steps))
 

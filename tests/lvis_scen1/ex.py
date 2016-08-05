@@ -14,7 +14,7 @@ from analysis import Analysis
 import plot_class
 import random
 import scenarios
-from gridworld import HighVarInitStateGrid
+from gridworld import LowVarInitStateGrid
 from policy import Policy
 import numpy as np
 from mdp import ClassicMDP
@@ -140,12 +140,8 @@ class RandomTest(BaseTest):
         self.comparisons_directory, self.data_directory = self.make_dirs([LIMIT_DATA, DEPTH, MOVES], ['ld', 'd', 'm'])
         if not os.path.exists(self.comparisons_directory):
             os.makedirs(self.comparisons_directory)
-        # else:
-        #     return
         if not os.path.exists(self.data_directory):
             os.makedirs(self.data_directory)
-        # else:
-        #     return 
 
 
         H = 15
@@ -153,7 +149,7 @@ class RandomTest(BaseTest):
 
         rewards = scen['rewards']
         sinks = scen['sinks']
-        self.grid = HighVarInitStateGrid(15, 15, 15)
+        self.grid = LowVarInitStateGrid(15, 15, 15)
         self.grid.set_reward_states(rewards)
         self.grid.set_sink_states(sinks)
         self.policy = 'policies/overreal3d.p'
@@ -218,8 +214,8 @@ if __name__ == '__main__':
     # TRIALS = 15
     # SAMP = 15
 
-    ITER = 60
-    TRIALS = 30
+    ITER = 35
+    TRIALS = 60
     SAMP = 15
     #ITER = 2
     #TRIALS = 1
@@ -229,9 +225,9 @@ if __name__ == '__main__':
     #test = RandomTest('random/random', 80, ITER, TRIALS, SAMP)
 
     # ld_set = [5]
-    ld_set = [1]
+    ld_set = [5]
     d_set = [4]
-    steps = [50]
+    steps = [45]
 
     params = list(itertools.product(ld_set, d_set, steps))
 
@@ -241,7 +237,7 @@ if __name__ == '__main__':
         for filename in sorted(os.listdir('scenarios/')):
             if filename.endswith('.p') and filename == 'scen1.p':
                 scenario = random_scen.load('scenarios/' + filename)
-                test = RandomTest('hvis_scen1/unreal/' + filename, 50, ITER, TRIALS, SAMP)
+                test = RandomTest('lvis_scen1/ex/' + filename, 50, ITER, TRIALS, SAMP)
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)

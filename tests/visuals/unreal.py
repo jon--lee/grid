@@ -8,6 +8,7 @@ in the tower experiments.
 from base_test import BaseTest
 import itertools
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import export_graphviz
 from sklearn.ensemble import AdaBoostClassifier
 import os
 from analysis import Analysis
@@ -18,6 +19,8 @@ from gridworld import HighVarInitStateGrid
 from policy import Policy
 import numpy as np
 from mdp import ClassicMDP
+from sklearn.externals.six import StringIO  
+import pydotplus
 import random_scen
 
 class RandomTest(BaseTest):
@@ -46,7 +49,7 @@ class RandomTest(BaseTest):
             classic_il_acc[t,:] = acc
             classic_il_loss[t,:] = loss
 
-
+        self.visualize(dt, "supervise")
         return value_iter_data, classic_il_data, classic_il_acc, classic_il_loss
             
 
@@ -73,7 +76,7 @@ class RandomTest(BaseTest):
             dagger_acc[t, :] = acc
             dagger_loss[t,:] = loss
     
-    
+        self.visualize(dt, "dagger")
         return dagger_data, dagger_acc, dagger_loss
 
     def boosted_supervise(self):
@@ -130,6 +133,12 @@ class RandomTest(BaseTest):
             dagger_loss[t,:] = loss
     
         return dagger_data, dagger_acc, dagger_loss
+
+    def visualize(self, dt, prefix):
+        dot_data = StringIO() 
+        export_graphviz(dt,filled=True, out_file=dot_data) 
+        graph = pydotplus.graph_from_dot_data(dot_data.getvalue()) 
+        graph.write_pdf(self.data_directory + prefix + "_explanations.pdf")
 
 
 
@@ -218,9 +227,9 @@ if __name__ == '__main__':
     # TRIALS = 15
     # SAMP = 15
 
-    ITER = 60
-    TRIALS = 30
-    SAMP = 15
+    ITER = 35
+    TRIALS = 1
+    SAMP = 2
     #ITER = 2
     #TRIALS = 1
     #SAMP = 2
@@ -241,7 +250,7 @@ if __name__ == '__main__':
         for filename in sorted(os.listdir('scenarios/')):
             if filename.endswith('.p') and filename == 'scen1.p':
                 scenario = random_scen.load('scenarios/' + filename)
-                test = RandomTest('hvis_scen1/unreal/' + filename, 50, ITER, TRIALS, SAMP)
+                test = RandomTest('visuals/unreal/' + filename, 50, ITER, TRIALS, SAMP)
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)

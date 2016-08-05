@@ -14,7 +14,7 @@ from analysis import Analysis
 import plot_class
 import random
 import scenarios
-from gridworld import HighVarInitStateGrid
+from gridworld import LowVarInitStateGrid
 from policy import Policy
 import numpy as np
 from mdp import ClassicMDP
@@ -153,7 +153,7 @@ class RandomTest(BaseTest):
 
         rewards = scen['rewards']
         sinks = scen['sinks']
-        self.grid = HighVarInitStateGrid(15, 15, 15)
+        self.grid = LowVarInitStateGrid(15, 15, 15)
         self.grid.set_reward_states(rewards)
         self.grid.set_sink_states(sinks)
         self.policy = 'policies/overreal3d.p'
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     # TRIALS = 15
     # SAMP = 15
 
-    ITER = 60
+    ITER = 30
     TRIALS = 30
     SAMP = 15
     #ITER = 2
@@ -241,7 +241,7 @@ if __name__ == '__main__':
         for filename in sorted(os.listdir('scenarios/')):
             if filename.endswith('.p') and filename == 'scen1.p':
                 scenario = random_scen.load('scenarios/' + filename)
-                test = RandomTest('hvis_scen1/unreal/' + filename, 50, ITER, TRIALS, SAMP)
+                test = RandomTest('lvis_scen1/unreal/' + filename, 50, ITER, TRIALS, SAMP)
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)

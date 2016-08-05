@@ -140,12 +140,12 @@ class RandomTest(BaseTest):
         self.comparisons_directory, self.data_directory = self.make_dirs([LIMIT_DATA, DEPTH, MOVES], ['ld', 'd', 'm'])
         if not os.path.exists(self.comparisons_directory):
             os.makedirs(self.comparisons_directory)
-        else:
-            return
+        # else:
+        #     return
         if not os.path.exists(self.data_directory):
             os.makedirs(self.data_directory)
-        else:
-            return
+        # else:
+            # return
 
 
         H = 15
@@ -218,8 +218,8 @@ if __name__ == '__main__':
     # TRIALS = 15
     # SAMP = 15
 
-    ITER = 30
-    TRIALS = 20
+    ITER = 20
+    TRIALS = 10
     SAMP = 15
     #ITER = 2
     #TRIALS = 1
@@ -230,11 +230,10 @@ if __name__ == '__main__':
 
     # ld_set = [5]
     ld_set = [1]
-    d_set = [4, 5]
-    steps = [40, 50]
+    d_set = [4]
+    steps = [50]
 
     params = list(itertools.product(ld_set, d_set, steps))
-    params = [[1, 4, 50], [1, 5, 50], [1, 3, 55]]
 
 
     for i in range(len(params)):
