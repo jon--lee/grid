@@ -12,3 +12,4 @@ supervised.py
 *.npy
 qnet/
 *.zip
+*.pdf
