@@ -4,7 +4,7 @@ from state import State
 import numpy as np
 class ScikitSupervise():
 
-    def __init__(self, grid, mdp, super_pi, classifier=None, moves=40):
+    def __init__(self, grid, mdp, super_pi, classifier=None, moves=40, super_pi_actual=None):
         self.grid = grid
         self.mdp = mdp
         self.super_pi = super_pi
@@ -13,6 +13,9 @@ class ScikitSupervise():
         self.reward = np.zeros(self.moves)
         self.record = False
         self.recent_rollout_states = []
+        if super_pi_actual is None:
+            super_pi_actual = super_pi
+        self.super_pi_actual = super_pi_actual
 
     def rollout(self):
         self.grid.reset_mdp()
@@ -33,7 +36,7 @@ class ScikitSupervise():
             self.recent_rollout_states.append(self.mdp.state)
         #print self.mdp.state
     def compare_policies(self, x):
-        sup_a = self.super_pi.get_next(x)
+        sup_a = self.super_pi_actual.get_next(x)
         act_a = self.mdp.pi.get_next(x)
         if sup_a != act_a:
             self.mistakes += 1

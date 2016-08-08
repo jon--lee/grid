@@ -27,6 +27,7 @@ class BaseTest():
         #self.INITIAL_RO = None
         self.moves = moves
         self.base_name = base_name
+        self.pi_actual = None
         return
 
     def make_dirs(self, args, ids):
@@ -45,7 +46,7 @@ class BaseTest():
 
     def supervise_trial(self, mdp, learner):
         mdp.load_policy(self.policy)
-        sup = ScikitSupervise(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves)
+        sup = ScikitSupervise(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves, super_pi_actual=self.pi_actual)
         
         value_iter_r = np.zeros(self.ITER)
         classic_il_r = np.zeros(self.ITER)
@@ -86,7 +87,7 @@ class BaseTest():
 
     def dagger_trial(self, mdp, learner):
         mdp.load_policy(self.policy)
-        dagger = ScikitDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves)
+        dagger = ScikitDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves, super_pi_actual=self.pi_actual)
         dagger.record = True
         
         for _ in range(self.LIMIT_DATA):

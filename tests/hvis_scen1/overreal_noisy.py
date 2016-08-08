@@ -27,6 +27,8 @@ class RandomTest(BaseTest):
         #mdp.value_iteration()
         #mdp.save_policy(self.policy)
         mdp.load_policy(self.policy)
+        self.pi_actual = mdp.pi
+        mdp.load_policy(self.policy)
         self.value_iter_pi = mdp.pi
 
         value_iter_data =   np.zeros([self.TRIALS, self.ITER])
@@ -54,8 +56,9 @@ class RandomTest(BaseTest):
         mdp = ClassicMDP(NoisyPolicy(self.grid), self.grid)
         #mdp.value_iteration()
         #mdp.save_policy(self.policy)
+        mdp.load_policy(self.policy_actual)
+        self.pi_actual = mdp.pi
         mdp.load_policy(self.policy)
-        
         self.value_iter_pi = mdp.pi
 
         dagger_data = np.zeros((self.TRIALS, self.ITER))
@@ -153,6 +156,7 @@ class RandomTest(BaseTest):
         self.grid.set_reward_states(rewards)
         self.grid.set_sink_states(sinks)
         self.policy = 'policies/overreal3d_noisy.p'
+        self.policy_actual = 'policies/overreal3d.p'
     
         value_iter_data, classic_il_data, classic_il_acc, classic_il_loss = self.vanilla_supervise()
         dagger_data, dagger_acc, dagger_loss = self.vanilla_dagger()
@@ -214,8 +218,8 @@ if __name__ == '__main__':
     # TRIALS = 15
     # SAMP = 15
 
-    ITER = 35
-    TRIALS = 60
+    ITER = 120
+    TRIALS = 30
     SAMP = 15
     #ITER = 2
     #TRIALS = 1
@@ -227,7 +231,7 @@ if __name__ == '__main__':
     # ld_set = [5]
     ld_set = [1]
     d_set = [100]
-    steps = [35]
+    steps = [50]
 
     params = list(itertools.product(ld_set, d_set, steps))
 
