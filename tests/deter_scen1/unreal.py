@@ -156,7 +156,7 @@ class RandomTest(BaseTest):
         self.grid = Grid(15, 15, 15)
         self.grid.set_reward_states(rewards)
         self.grid.set_sink_states(sinks)
-        self.policy = 'policies/overreal3d.p'
+        self.policy = 'policies/unreal3d-8-19.p'
     
         value_iter_data, classic_il_data, classic_il_acc, classic_il_loss = self.vanilla_supervise()
         dagger_data, dagger_acc, dagger_loss = self.vanilla_dagger()
@@ -218,8 +218,8 @@ if __name__ == '__main__':
     # TRIALS = 15
     # SAMP = 15
 
-    ITER = 40
-    TRIALS = 30
+    ITER = 60
+    TRIALS = 20
     SAMP = 15
     #ITER = 2
     #TRIALS = 1
@@ -228,10 +228,10 @@ if __name__ == '__main__':
 
     #test = RandomTest('random/random', 80, ITER, TRIALS, SAMP)
 
-    # ld_set = [5]
-    ld_set = [1]
-    d_set = [3]
-    steps = [35, 50]
+    ld_set = [5]
+    # ld_set = [1]
+    d_set = [4]
+    steps = [50]
 
     params = list(itertools.product(ld_set, d_set, steps))
 

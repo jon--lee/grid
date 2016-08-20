@@ -14,7 +14,7 @@ from analysis import Analysis
 import plot_class
 import random
 import scenarios
-from gridworld import Grid
+from gridworld import HighVarInitStateGrid
 from policy import Policy
 import numpy as np
 from mdp import ClassicMDP
@@ -24,8 +24,8 @@ class RandomTest(BaseTest):
     
     def vanilla_supervise(self):
         mdp = ClassicMDP(Policy(self.grid), self.grid)
-        #mdp.value_iteration()
-        #mdp.save_policy(self.policy)
+        mdp.value_iteration()
+        mdp.save_policy(self.policy)
         mdp.load_policy(self.policy)
         self.value_iter_pi = mdp.pi
 
@@ -140,8 +140,12 @@ class RandomTest(BaseTest):
         self.comparisons_directory, self.data_directory = self.make_dirs([LIMIT_DATA, DEPTH, MOVES], ['ld', 'd', 'm'])
         if not os.path.exists(self.comparisons_directory):
             os.makedirs(self.comparisons_directory)
+        else:
+            return
         if not os.path.exists(self.data_directory):
             os.makedirs(self.data_directory)
+        else:
+            return
 
 
         H = 15
@@ -149,10 +153,10 @@ class RandomTest(BaseTest):
 
         rewards = scen['rewards']
         sinks = scen['sinks']
-        self.grid = Grid(15, 15, 15)
+        self.grid = HighVarInitStateGrid(15, 15, 15)
         self.grid.set_reward_states(rewards)
         self.grid.set_sink_states(sinks)
-        self.policy = 'policies/overreal3d-8-19.p'
+        self.policy = 'policies/sparse.p'
     
         value_iter_data, classic_il_data, classic_il_acc, classic_il_loss = self.vanilla_supervise()
         dagger_data, dagger_acc, dagger_loss = self.vanilla_dagger()
@@ -224,20 +228,19 @@ if __name__ == '__main__':
 
     #test = RandomTest('random/random', 80, ITER, TRIALS, SAMP)
 
-    ld_set = [5]
-    # ld_set = [1]
-    d_set = [100]
+    # ld_set = [5]
+    ld_set = [1]
+    d_set = [1, 2, 4, 100]
     steps = [50]
 
     params = list(itertools.product(ld_set, d_set, steps))
 
 
-
-    for i in range(len(params)):
-        for filename in sorted(os.listdir('scenarios/')):
-            if filename.endswith('.p') and filename == 'scen1.p':
-                scenario = random_scen.load('scenarios/' + filename)
-                test = RandomTest('deter_scen1/overreal/' + filename, 50, ITER, TRIALS, SAMP)
+    for filename in sorted(os.listdir('scenarios_sparse/')):
+        for i in range(len(params)):
+            if filename.endswith('.p'):
+                scenario = random_scen.load('scenarios_sparse/' + filename)
+                test = RandomTest('sparse/random/' + filename, 50, ITER, TRIALS, SAMP)
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)
