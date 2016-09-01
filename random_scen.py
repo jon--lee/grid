@@ -44,6 +44,36 @@ def save2d(scen):
         pickle.dump(scen, f)
     return path
 
+def save_sparse2d(scen):
+    i = 0
+    path = 'scenarios_sparse2d/scen' + str(i) + '.p'
+    while os.path.exists(path):
+        i += 1
+        path = 'scenarios_sparse2d/scen' + str(i) + '.p'
+    with open(path, 'w') as f:
+        pickle.dump(scen, f)
+    return path
+
+def save_sparser2d(scen):
+    i = 0
+    path = 'scenarios_sparser2d/scen' + str(i) + '.p'
+    while os.path.exists(path):
+        i += 1
+        path = 'scenarios_sparser2d/scen' + str(i) + '.p'
+    with open(path, 'w') as f:
+        pickle.dump(scen, f)
+    return path
+
+def save_dense2d(scen):
+    i = 0
+    path = 'scenarios_dense2d/scen'  +str(i) + '.p'
+    while os.path.exists(path):
+        i += 1
+        path = 'scenarios_dense2d/scen' + str(i) + '.p'
+    with open(path, 'w') as f:
+        pickle.dump(scen, f)
+    return path
+
 def save_sparse3d(scen):
     i = 0
     path = 'scenarios_sparse/scen' + str(i) + '.p'
