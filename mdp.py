@@ -55,6 +55,20 @@ class ClassicMDP():
         
         return [self.state,next_action]    
         
+    def move_partial(self, obs):
+        next_action = self.pi.get_next(obs)
+        adjs = self.grid.get_adjacent(self.state)
+        x = random.random()
+        prob_sum = 0.0
+        for adj in adjs:
+            trans_prob = self.transition_prob(self.state, next_action, adj)
+            prob_sum += trans_prob
+            if x < prob_sum:
+                self.update_state(adj)
+                return [adj, next_action]
+        
+        return [self.state,next_action]    
+        
 
     def value_iteration(self):
         print "Performing value iteration"

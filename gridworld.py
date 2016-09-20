@@ -164,6 +164,12 @@ class Grid():
         s, a = mdp.move()
         self.time_steps += 1
         return a
+
+    def step_partial(self, mdp, obs):
+        self.record_states.append(mdp.state)
+        s, a = mdp.move_partial(obs)
+        self.time_steps += 1
+        return a
         
     def _animate(self, i):
         self.figure.autoscale(False)

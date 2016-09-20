@@ -2,8 +2,8 @@ import os
 from gridworld import Grid
 from policy import Policy
 from mdp import ClassicMDP
-from scikit_supervise_partial import ScikitSupervisePartial
-from scikit_dagger_partial import ScikitDaggerPartial
+from partials.scikit_supervise_partial import ScikitSupervisePartial
+from partials.scikit_dagger_partial import ScikitDaggerPartial
 import numpy as np
 import plot_class
 from sklearn.tree import DecisionTreeClassifier
@@ -46,7 +46,7 @@ class BaseTestPOMDP():
 
     def supervise_trial(self, mdp, learner):
         mdp.load_policy(self.policy)
-        sup = ScikitSupervise(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves, super_pi_actual=self.pi_actual)
+        sup = ScikitSupervisePartial(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves, super_pi_actual=self.pi_actual)
         
         value_iter_r = np.zeros(self.ITER)
         classic_il_r = np.zeros(self.ITER)
@@ -87,7 +87,7 @@ class BaseTestPOMDP():
 
     def dagger_trial(self, mdp, learner):
         mdp.load_policy(self.policy)
-        dagger = ScikitDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves, super_pi_actual=self.pi_actual)
+        dagger = ScikitDaggerPartial(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves, super_pi_actual=self.pi_actual)
         dagger.record = True
         
         for _ in range(self.LIMIT_DATA):

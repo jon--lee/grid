@@ -249,7 +249,7 @@ if __name__ == '__main__':
             if filename.endswith('.p'):
                 policy = 'policies/random2d_deter_sparse_' + str(filename)
                 scenario = random_scen.load('scenarios_sparse2d/' + filename)
-                test = RandomTest('partials/random2d_partial_sparse_linear/' + filename, 40, ITER, TRIALS, SAMP)
+                test = RandomTest('partials/random2d_partial_linear_low_cov/' + filename, 40, ITER, TRIALS, SAMP)
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)

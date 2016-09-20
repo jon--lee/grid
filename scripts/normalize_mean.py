@@ -4,9 +4,10 @@ import os
 
 def normalize(directory):
     # uncomment the two following lines in case of noisy supervisor
-    #new_dir = directory.replace('random2d_deter_sparse_linear_noisy', 'random2d_deter_sparse_linear')
-    #value_iter_data = np.load(new_dir + 'sup_data.npy')
-    value_iter_data = np.load(directory + 'sup_data.npy')
+    new_dir = directory.replace('random2d_deter_sparse_linear_noisy', 'random2d_deter_sparse_linear')
+    #new_dir = directory.replace('deter_linear_noisy', 'deter_linear')
+    value_iter_data = np.load(new_dir + 'sup_data.npy')
+    #value_iter_data = np.load(directory + 'sup_data.npy')
     classic_il_data = np.load(directory + 'classic_il_data.npy')
     dagger_data = np.load(directory + 'dagger_data.npy')
 
@@ -33,13 +34,21 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
     se_classic_il = np.std(classic_il_data, axis=0) / np.sqrt(classic_il_data.shape[0])
     se_dagger = np.std(dagger_data, axis=0) / np.sqrt(dagger_data.shape[0])
     
+    # regular error bars
     x1 = range(len(mean_classic_il))
     x2 = range(len(mean_dagger))
 
-    plt.errorbar(x1, mean_classic_il, se_classic_il, linewidth=4.0, color='orange')
-    plt.errorbar(x2, mean_dagger, se_dagger, linewidth=4.0, color='steelblue')
+    plt.errorbar(x1[:25], mean_classic_il[:25], se_classic_il[:25], linewidth=2.0, color='orange', marker='o', ecolor='white', elinewidth=1.0, markeredgecolor='orange', markeredgewidth=2.5, capsize=0, markerfacecolor='white')
+    plt.errorbar(x2[:25], mean_dagger[:25], se_dagger[:25], linewidth=2.0, color='steelblue', marker='o', ecolor='white', elinewidth=1.0, markeredgecolor='steelblue', markeredgewidth=2.5, capsize=0, markerfacecolor='white')
+    plt.errorbar(x1[:25], mean_classic_il[:25], se_classic_il[:25], linewidth=1.0, color='orange', marker='o', ecolor='black', elinewidth=1.0, markeredgecolor='orange', markeredgewidth=1, markerfacecolor='white')
+    plt.errorbar(x2[:25], mean_dagger[:25], se_dagger[:25], linewidth=1.0, color='steelblue', marker='o', ecolor='black', elinewidth=1.0, markeredgecolor='steelblue', markeredgewidth=1, markerfacecolor='white')
 
+    #plt.errorbar(x1, mean_classic_il, se_classic_il, linewidth=2.0, color='orange', marker='o', ecolor='black', elinewidth=1.0, markeredgecolor='orange', markeredgewidth=1.0, markerfacecolor='orange')   
+    #plt.errorbar(x2, mean_dagger, se_dagger, linewidth=2.0, color='steelblue', marker='o', ecolor='black', elinewidth=1.0, markeredgecolor='steelblue', markeredgewidth=1.0, markerfacecolor='steelblue')
+
+    # end regular error bars
     """
+    # fancy error bars
     plt.plot(mean_classic_il, linewidth=4.0, color='orange')
     plt.plot(mean_dagger, linewidth=4.0, color='steelblue')
 
@@ -48,7 +57,9 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
             facecolor='orange', alpha='.3')
     plt.fill_between(range(len(mean_dagger)), mean_dagger - se_dagger, mean_dagger + se_dagger,
             facecolor='steelblue', alpha='.3')
+    # end fancy error bars
     """
+
     plt.ylim(0, 1)
     plt.ylabel(label)
     plt.xlabel('Iterations')
@@ -58,9 +69,11 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
     plt.show()
 
 
-base_dir = 'comparisons/random2d_deter_sparse_linear'
-#base_dir = 'comparisons/random2d_deter_sparse_linear_noisy'
+#base_dir = 'comparisons/random2d_deter_sparse_linear'
+base_dir = 'comparisons/random2d_deter_sparse_linear_noisy'
 #base_dir = 'comparisons/sparse/deter_linear'
+#base_dir = 'comparisons/sparse/deter_linear_noisy'
+#base_dir = 'comparisons/partials/random2d_partial_sparse_linear'
 substr = '_1ld_100d_30m_data'
 
 def aggregate():
@@ -83,7 +96,7 @@ def aggregate():
                 print sub_dir                
             except:
                 pass
-    plot(np.array(classic_il_data), np.array(dagger_data), label='Reward')#, filename='../deep_noisy_2d_reward.eps')
+    plot(np.array(classic_il_data), np.array(dagger_data), label='Reward', filename='tmp_reward.eps')#, filename='../deep_noisy_2d_reward.eps')
 
 def aggregate_loss():
     #base_dir = 'comparisons/sparse/deter_random'    
@@ -103,12 +116,12 @@ def aggregate_loss():
                 print sub_dir            
             except:
                 pass
-    plot(np.array(classic_il_data), np.array(dagger_data), label='Loss')#, filename='../deep_noisy_2d_loss.eps')
+    plot(np.array(classic_il_data), np.array(dagger_data), label='Loss', filename='tmp_loss.eps')#, filename='../deep_noisy_2d_loss.eps')
 
 
 if __name__ == '__main__':
     aggregate()
-    #aggregate_loss()
+    aggregate_loss()
     #normalize('comparisons/sparse/deter_random/scen103.p_1ld_4d_50m_data/')
 
 
