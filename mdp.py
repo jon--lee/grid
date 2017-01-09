@@ -97,7 +97,6 @@ class ClassicMDP():
             else:
                 print "Delta: " + str(delta) + " above 1e-2"
         
-        pickle.dump(self.values, open('values.p', 'w'))
 
         # find actions with current value
         for state in self.grid.get_all_states():

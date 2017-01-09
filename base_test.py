@@ -52,6 +52,8 @@ class BaseTest():
         classic_il_r = np.zeros(self.ITER)
         acc = np.zeros(self.ITER)
         loss = np.zeros(self.ITER)
+        sup_dist_loss = np.zeros(self.ITER)
+        
         for i in range(self.ITER):
             print "     Iteration: " + str(i)
             mdp.pi = self.value_iter_pi
@@ -81,7 +83,13 @@ class BaseTest():
                 sup.rollout()
                 loss[i] += sup.get_loss() / float(self.SAMP)
                 classic_il_r[i] += sup.get_reward() / float(self.SAMP)
-        return value_iter_r, classic_il_r, acc, loss
+
+            for _ in range(self.SAMP):
+                sup.record = False
+                sup.rollout_sup()
+                sup_dist_loss[i] += sup.get_sup_loss() / float(self.SAMP)
+                
+        return value_iter_r, classic_il_r, acc, loss, sup_dist_loss
 
 
 
@@ -104,6 +112,8 @@ class BaseTest():
         r = np.zeros(self.ITER)
         acc = np.zeros(self.ITER)
         loss = np.zeros(self.ITER)
+        sup_dist_loss = np.zeros(self.ITER)
+
         for i in range(self.ITER):
             print "     Iteration: " + str(i)
             print "     Retraining with " + str(len(dagger.learner.data)) + ' examples'
@@ -117,7 +127,12 @@ class BaseTest():
                 loss[i] += dagger.get_loss() / float(self.SAMP)
                 r[i] += dagger.get_reward() / float(self.SAMP)
          
-        return r, acc, loss
+            for _ in range(self.SAMP):
+                dagger.record = False
+                dagger.rollout_sup()
+                sup_dist_loss[i] += dagger.get_sup_loss() / float(self.SAMP)
+
+        return r, acc, loss, sup_dist_loss
                 
 
 

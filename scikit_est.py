@@ -1,5 +1,4 @@
 
-
 class SKEst():
 
     def __init__(self, grid, mdp, learner):
@@ -7,9 +6,13 @@ class SKEst():
         self.grid = grid
         self.data = []
         self.learner = learner
-        
+        self.failed_class = False
+
+
     def add_datum(self, state, action):
         self.data.append((state, action))
+
+
 
     def fit(self):
         X = []
@@ -17,11 +20,16 @@ class SKEst():
         for state, action in self.data:
             X.append(list(state.pos))
             Y.append(action)
-        self.learner.fit(X, Y)
+        try:
+            self.learner.fit(X, Y)
+        except ValueError:
+            self.failed_class = True
 
 
     def predict(self, a):
-        return self.learner.predict(a)
+        if self.failed_class:
+            return self.data[0][1]
+        return self.learner.predict(a)[0]
 
     def get_states(self):
         N = len(self.data)
@@ -39,7 +47,7 @@ class SKEst():
     def acc(self):
         results = []
         for s, a in self.data:
-            pred = self.predict([list(s.pos)])[0]
+            pred = self.predict([list(s.pos)])
             results.append(pred == a)
         return float(sum(results)) / float(len(self.data))
     

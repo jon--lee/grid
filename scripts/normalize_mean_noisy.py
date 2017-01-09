@@ -2,12 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-base_dir = 'comparisons/random2d_deter_sparse_linear'
-substr = '_1ld_-1d_30m_data'
+base_dir = 'comparisons/revisited/test_loss/3'
+ref_root = 'comparisons/random2d_deter_sparse_linear'
+substr = '_1ld_-1d_70m_data'
 
 
 def normalize(directory):
-    value_iter_data = np.load(directory + 'sup_data.npy')
+    ref_dir = directory.replace(base_dir, ref_root)
+    value_iter_data = np.load(ref_dir + 'sup_data.npy')
     classic_il_data = np.load(directory + 'classic_il_data.npy')
     dagger_data = np.load(directory + 'dagger_data.npy')
 
@@ -32,6 +34,10 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
 
     se_classic_il = np.std(classic_il_data, axis=0) / np.sqrt(classic_il_data.shape[0])
     se_dagger = np.std(dagger_data, axis=0) / np.sqrt(dagger_data.shape[0])
+
+    # save the normalized data for comparisons with others if needed
+    #np.save('compilations/classic_il_data3.npy', classic_il_data)
+    #np.save('compilations/dagger_data3.npy', dagger_data)
     
     x1 = range(len(mean_classic_il))
     x2 = range(len(mean_dagger))
@@ -76,7 +82,6 @@ def aggregate_loss():
                 pass
     plot(np.array(classic_il_data), np.array(dagger_data), label='Loss', filename='images/tmp_loss.eps')
 
-
 def aggregate_test_loss():
     classic_il_data = []
     dagger_data = []
@@ -90,12 +95,12 @@ def aggregate_test_loss():
             except:
                 pass
     plot(np.array(classic_il_data), np.array(dagger_data), label='Loss', filename='images/tmp_test_loss.eps')
+    
 
 if __name__ == '__main__':
     aggregate()
     aggregate_loss()
-    # aggregate_test_loss()
-
+    aggregate_test_loss()
 
 
 
