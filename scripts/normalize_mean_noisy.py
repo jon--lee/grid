@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-base_dir = 'comparisons/revisited/test_loss/3'
+base_dir = 'comparisons/revisited/test_loss/5'
 ref_root = 'comparisons/random2d_deter_sparse_linear'
 substr = '_1ld_-1d_70m_data'
 
