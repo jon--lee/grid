@@ -3,8 +3,9 @@ from policy import SKPolicy
 from state import State
 import numpy as np
 import IPython
+import random
 
-class ScikitDagger():
+class ScikitBetaDagger():
     def __init__(self, grid, mdp, super_pi, classifier=None, moves=40, super_pi_actual=None):
         self.grid = grid
         self.mdp = mdp
@@ -18,7 +19,7 @@ class ScikitDagger():
             super_pi_actual = super_pi
         self.super_pi_actual = super_pi_actual
 
-    def rollout(self):
+    def rollout(self, beta):
         # print "\t\tsuper_pi: " + self.super_pi.__class__.__name__ + ", mdp.pi: "  + self.mdp.pi.__class__.__name__ + \
         #             "super_pi_actual: " + self.super_pi_actual.__class__.__name__
 
@@ -26,10 +27,42 @@ class ScikitDagger():
         self.recent_rollout_states = [self.mdp.state]
         self.reward = np.zeros(self.moves)
         self.mistakes = 0
+        sup_count = 0
         for t in range(self.moves):
             if self.record:
                 actual_action = self.super_pi.get_actual_next(self.mdp.state)
                 self.learner.add_datum(self.mdp.state, actual_action)
+            else:
+                raise Exception("should be recording here")
+
+            x_t = self.mdp.state
+            # self.compare_policies(x_t)
+
+            if random.random() < beta:          # choose supervisor's action
+                sup_count += 1
+                tmp_pi = self.mdp.pi
+                self.mdp.pi = self.super_pi
+                a_t = self.grid.step(self.mdp)
+                self.mdp.pi = tmp_pi
+            else:                               # go with agent's action
+                a_t = self.grid.step(self.mdp)
+
+            x_t_1 = self.mdp.state
+
+            # self.reward[t] = self.grid.reward(x_t, a_t, x_t_1)
+            # self.recent_rollout_states.append(self.mdp.state)
+        print "\t\tExpected beta: " + str(beta)
+        print "\t\tEmpirical beta: " + str(sup_count / float(self.moves))
+
+
+    def eval_rollout(self):
+        self.grid.reset_mdp()
+        self.recent_rollout_states = [self.mdp.state]
+        self.reward = np.zeros(self.moves)
+        self.mistakes = 0
+        for t in range(self.moves):
+            if self.record:
+                raise Exception("should not be recording during eval")
 
             x_t = self.mdp.state
             self.compare_policies(x_t)
@@ -40,13 +73,14 @@ class ScikitDagger():
             self.reward[t] = self.grid.reward(x_t, a_t, x_t_1)
             self.recent_rollout_states.append(self.mdp.state)
 
+
     def rollout_sup(self):
         self.grid.reset_mdp()
         self.sup_mistakes = 0
 
         for t in range(self.moves):
             if self.record:
-                raise Exception
+                raise Exception("should not be recording during supervisor loss evaluation")
 
             x_t = self.mdp.state
             self.compare_sup_policies(x_t)

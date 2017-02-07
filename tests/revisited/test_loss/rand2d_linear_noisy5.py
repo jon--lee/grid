@@ -23,6 +23,7 @@ class RandomTest(BaseTest):
         if not os.path.isfile(self.policy):
             mdp.value_iteration()
             mdp.save_policy(self.policy)
+
         mdp.load_policy(self.policy)
         self.value_iter_pi = mdp.pi
 
@@ -164,7 +165,7 @@ if __name__ == '__main__':
     #SAMP = 15
     
     # partial trial (several hours when number of scenarios is limited)
-    ITER = 25
+    ITER = 15
     TRIALS = 10
     SAMP = 10
 
@@ -180,8 +181,8 @@ if __name__ == '__main__':
     
     params = list(itertools.product(ld_set, d_set, moves)) # cartesian product of all settings
 
-    for filename in sorted(os.listdir('scenarios_sparse2d/')):                                      # path to pickled scenarios to test on
-        if 'scen30' in filename:                                                                   # in case you want to only test on subset of scenarios (recommended because faster)
+    for i, filename in enumerate(sorted(os.listdir('scenarios_sparse2d/'))):                          # path to pickled scenarios to test on
+        if i >= 25:                                                                                    # in case you want to only test on subset of scenarios (recommended because faster)
             break
         for i in range(len(params)):
             if filename.endswith('.p'):

@@ -1,14 +1,17 @@
 import numpy as np
+import IPython
 import matplotlib.pyplot as plt
 import os
 
-base_dir = 'comparisons/revisited/test_loss/5'
+base_dir = 'comparisons/revisited/beta_sweep/0/'
 ref_root = 'comparisons/random2d_deter_sparse_linear'
-substr = '_1ld_-1d_70m_data'
+substr = '_20ld_-1d_70m_0.0pb_data'
+ref_substr = '_1ld_-1d_70m_data'
 
 
 def normalize(directory):
     ref_dir = directory.replace(base_dir, ref_root)
+    ref_dir = ref_dir.replace(substr, ref_substr)
     value_iter_data = np.load(ref_dir + 'sup_data.npy')
     classic_il_data = np.load(directory + 'classic_il_data.npy')
     dagger_data = np.load(directory + 'dagger_data.npy')
@@ -36,12 +39,16 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
     se_dagger = np.std(dagger_data, axis=0) / np.sqrt(dagger_data.shape[0])
 
     # save the normalized data for comparisons with others if needed
-    #np.save('compilations/classic_il_data3.npy', classic_il_data)
-    #np.save('compilations/dagger_data3.npy', dagger_data)
+    np.save('compilations/trajs_sweep_supervise/supervise_20ld.npy', classic_il_data)
+    np.save('compilations/trajs_sweep_dagger/dagger_20ld.npy', dagger_data)
     
     x1 = range(len(mean_classic_il))
     x2 = range(len(mean_dagger))
 
+    print "supervise mean: " + str(np.mean(classic_il_data))
+    print "dagger mean: " + str(np.mean(dagger_data))
+
+    
     plt.errorbar(x1[:25], mean_classic_il[:25], se_classic_il[:25], linewidth=2.0, color='orange', marker='o', ecolor='white', elinewidth=1.0, markeredgecolor='orange', markeredgewidth=2.5, capsize=0, markerfacecolor='white')
     plt.errorbar(x2[:25], mean_dagger[:25], se_dagger[:25], linewidth=2.0, color='steelblue', marker='o', ecolor='white', elinewidth=1.0, markeredgecolor='steelblue', markeredgewidth=2.5, capsize=0, markerfacecolor='white')
     plt.errorbar(x1[:25], mean_classic_il[:25], se_classic_il[:25], linewidth=1.0, color='orange', marker='o', ecolor='black', elinewidth=1.0, markeredgecolor='orange', markeredgewidth=1, markerfacecolor='white')
@@ -69,6 +76,7 @@ def aggregate():
     plot(np.array(classic_il_data), np.array(dagger_data), label='Reward', filename='images/tmp_reward.eps')
 
 def aggregate_loss():
+    print "\n Surrogate loss"
     classic_il_data = []
     dagger_data = []
     for sub_dir in next(os.walk(base_dir))[1]:
@@ -77,12 +85,13 @@ def aggregate_loss():
             try:
                 classic_il_data.append(np.mean(np.load(dire + 'classic_il_loss.npy'), axis=0))
                 dagger_data.append(np.mean(np.load(dire + 'dagger_loss.npy'), axis=0))
-                print sub_dir            
+                # print sub_dir            
             except:
                 pass
     plot(np.array(classic_il_data), np.array(dagger_data), label='Loss', filename='images/tmp_loss.eps')
 
 def aggregate_test_loss():
+    print "\n Test loss"
     classic_il_data = []
     dagger_data = []
     for sub_dir in next(os.walk(base_dir))[1]:
@@ -91,16 +100,32 @@ def aggregate_test_loss():
             try:
                 classic_il_data.append(np.mean(np.load(dire + 'classic_il_test_loss.npy'), axis=0))
                 dagger_data.append(np.mean(np.load(dire + 'dagger_test_loss.npy'), axis=0))
-                print sub_dir            
+                # print sub_dir            
             except:
                 pass
     plot(np.array(classic_il_data), np.array(dagger_data), label='Loss', filename='images/tmp_test_loss.eps')
-    
+
+
+def aggregate_acc():
+    print "\n Accuracy"
+    classic_il_data = []
+    dagger_data = []
+    for sub_dir in next(os.walk(base_dir))[1]:
+        if substr in sub_dir:
+            dire = base_dir + '/' + sub_dir + '/'
+            try:
+                classic_il_data.append(np.mean(np.load(dire + 'classic_il_acc.npy'), axis=0))
+                dagger_data.append(np.mean(np.load(dire + 'dagger_acc.npy'), axis=0))
+                # print sub_dir            
+            except:
+                pass
+    plot(np.array(classic_il_data), np.array(dagger_data), label='Loss', filename='images/tmp_acc.eps')
 
 if __name__ == '__main__':
     aggregate()
-    aggregate_loss()
-    aggregate_test_loss()
+    # aggregate_acc()
+    # aggregate_loss()
+    # aggregate_test_loss()
 
 
 

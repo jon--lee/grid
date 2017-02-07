@@ -10,16 +10,17 @@ import plot_class
 import random
 import scenarios
 from gridworld import HighVarInitStateGrid, LowVarInitStateGrid, Grid
-from policy import NoisyPolicy0         # type of policy (plain, noisy, etc.)
+from policy import NoisyPolicy4 as EpsPolicy         # type of policy (plain, noisy, etc.)
 import numpy as np
 from mdp import ClassicMDP
 import random_scen
 import os
+import uniform_param
 
 class RandomTest(BaseTest):
     
     def vanilla_supervise(self):
-        mdp = ClassicMDP(NoisyPolicy0(self.grid), self.grid)
+        mdp = ClassicMDP(EpsPolicy(self.grid), self.grid)
         if not os.path.isfile(self.policy):
             mdp.value_iteration()
             mdp.save_policy(self.policy)
@@ -53,7 +54,7 @@ class RandomTest(BaseTest):
             
 
     def vanilla_dagger(self):
-        mdp = ClassicMDP(NoisyPolicy0(self.grid), self.grid)
+        mdp = ClassicMDP(EpsPolicy(self.grid), self.grid)
         mdp.load_policy(self.policy)
         
         self.value_iter_pi = mdp.pi
@@ -73,7 +74,7 @@ class RandomTest(BaseTest):
                 dt = LinearSVC()
             else:
                 dt = DecisionTreeClassifier(max_depth=self.DEPTH)
-            r, acc, loss, test_loss = self.dagger_trial(mdp, dt)
+            r, acc, loss, test_loss = self.beta_dagger_trial(mdp, dt)
             
             dagger_data[t,:] = r
             dagger_acc[t, :] = acc
@@ -164,9 +165,9 @@ if __name__ == '__main__':
     #SAMP = 15
     
     # partial trial (several hours when number of scenarios is limited)
-    ITER = 25
-    TRIALS = 10
-    SAMP = 10
+    #ITER = 15
+    #TRIALS = 10
+    #SAMP = 10
 
     # debugging     (several minutes)
     #ITER = 2
@@ -174,20 +175,28 @@ if __name__ == '__main__':
     #SAMP = 2
 
     # specify settings (i.e. you can add moves = [30, 70] to get tests with 30 and 70 moves)
-    ld_set = [1]    # (limit_data) number of trajectories per iteration added to dataset
-    d_set = [-1]    # depth of decision tree (-1 for LinearSVC)
-    moves = [70]    # number of steps in each trajectory
+    #ld_set = [1]    # (limit_data) number of trajectories per iteration added to dataset
+    #d_set = [-1, 4]    # depth of decision tree (-1 for LinearSVC)
+    #moves = [70]    # number of steps in each trajectory
+    
+    ITER = uniform_param.ITER
+    TRIALS = uniform_param.TRIALS
+    SAMP = uniform_param.SAMP
+
+    ld_set = uniform_param.ld_set
+    d_set = uniform_param.d_set
+    moves = uniform_param.moves
     
     params = list(itertools.product(ld_set, d_set, moves)) # cartesian product of all settings
 
-    for filename in sorted(os.listdir('scenarios_sparse2d/')):                                      # path to pickled scenarios to test on
-        if 'scen30' in filename:                                                                   # in case you want to only test on subset of scenarios (recommended because faster)
+    for i, filename in enumerate(sorted(os.listdir('scenarios_sparse2d/'))):                          # path to pickled scenarios to test on
+        if i >= 20:                                                                                    # in case you want to only test on subset of scenarios (recommended because faster)
             break
         for i in range(len(params)):
             if filename.endswith('.p'):
-                policy = 'policies/rand2d_linear_noisy0_' + str(filename)                            # path to optimal policy: convention for policy paths is 'policies/[description] + [scenario name]'
+                policy = 'policies/rand2d_linear_noisy4_' + str(filename)                            # path to optimal policy: convention for policy paths is 'policies/[description] + [scenario name]'
                 scenario = random_scen.load('scenarios_sparse2d/' + filename)
-                test = RandomTest('revisited/test_loss/0/' + filename, 40, ITER, TRIALS, SAMP)      # (ignore '40'), first parameter is where data/plots are saved within ./comparisons/
+                test = RandomTest('revisited/beta_baseline7/4/' + filename, 40, ITER, TRIALS, SAMP)      # (ignore '40'), first parameter is where data/plots are saved within ./comparisons/
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)

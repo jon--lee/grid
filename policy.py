@@ -34,7 +34,7 @@ class SKPolicy(Policy):
         return self.est.predict([list(state.pos)])
 
 
-class SKNoisy5(Policy):
+"""class SKNoisy5(Policy):
     EPS = .5
 
     def __init__(self, est):
@@ -48,9 +48,9 @@ class SKNoisy5(Policy):
 
     def get_actual_next(self, state):
         return self.est.predict([list(state.pos)])
-    
+   """ 
 
-class NoisyPolicy(Policy):
+"""class NoisyPolicy(Policy):
 
     EPS = 0.3
     #EPS = .9
@@ -63,7 +63,7 @@ class NoisyPolicy(Policy):
 
     def get_actual_next(self, state):
         return Policy.get_next(self, state)
-
+"""
  
 
 class NoisyPolicy1(Policy):
@@ -79,6 +79,18 @@ class NoisyPolicy1(Policy):
     def get_actual_next(self, state):
         return Policy.get_next(self, state)
 
+class NoisyPolicy2(Policy):
+
+    EPS = 0.2
+
+    def get_next(self, state):
+        if random.random() > self.EPS:
+            return Policy.get_next(self, state)
+        else:
+            return random.choice(state.available_actions)
+
+    def get_actual_next(self, state):
+        return Policy.get_next(self, state)
 
 
 
@@ -96,6 +108,21 @@ class NoisyPolicy3(Policy):
     def get_actual_next(self, state):
         return Policy.get_next(self, state)
 
+class NoisyPolicy4(Policy):
+
+    EPS = 0.4
+
+    def get_next(self, state):
+        if random.random() > self.EPS:
+            return Policy.get_next(self, state)
+        else:
+            return random.choice(state.available_actions)
+
+    def get_actual_next(self, state):
+        return Policy.get_next(self, state)
+
+
+
 class NoisyPolicy6(Policy):
 
     EPS = 0.6
@@ -109,6 +136,34 @@ class NoisyPolicy6(Policy):
 
     def get_actual_next(self, state):
         return Policy.get_next(self, state)
+
+class NoisyPolicy7(Policy):
+
+    EPS = 0.7
+
+    def get_next(self, state):
+        if random.random() > self.EPS:
+            return Policy.get_next(self, state)
+        else:
+            return random.choice(state.available_actions)
+
+    def get_actual_next(self, state):
+        return Policy.get_next(self, state)
+
+
+class NoisyPolicy8(Policy):
+
+    EPS = 0.8
+
+    def get_next(self, state):
+        if random.random() > self.EPS:
+            return Policy.get_next(self, state)
+        else:
+            return random.choice(state.available_actions)
+
+    def get_actual_next(self, state):
+        return Policy.get_next(self, state)
+
 
 class NoisyPolicy9(Policy):
 
@@ -162,6 +217,7 @@ class NoisyPolicy0(Policy):
         if random.random() > self.EPS:
             return Policy.get_next(self, state)
         else:
+            raise Exception("eps = 0 policy choose random action... that should not happen")
             return random.choice(state.available_actions)
 
     def get_actual_next(self, state):

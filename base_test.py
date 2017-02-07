@@ -4,6 +4,7 @@ from policy import Policy
 from mdp import ClassicMDP
 from scikit_supervise import ScikitSupervise
 from scikit_dagger import ScikitDagger
+from scikit_beta_dagger import ScikitBetaDagger
 import numpy as np
 import plot_class
 from sklearn.tree import DecisionTreeClassifier
@@ -24,8 +25,9 @@ class BaseTest():
         self.ITER = ITER
         self.TRIALS = TRIALS
         self.SAMP = SAMP
-        #self.INITIAL_RO = None
+        # self.INITIAL_RO = None
         self.moves = moves
+        self.p_beta = -1.0
         self.base_name = base_name
         self.pi_actual = None
         return
@@ -59,18 +61,9 @@ class BaseTest():
             mdp.pi = self.value_iter_pi
             sup.record = True
             for _ in range(self.SAMP):
-                if _ >= self.LIMIT_DATA:
+                if _ >= self.LIMIT_DATA or (i == 0 and _ >= 1):
                     sup.record=False
-                # hacking initial rollout
-                #if self.INITIAL_RO is not None:
-                #    if i == 0 and _ >= self.INITIAL_RO:
-                #        sup.record=False
-                #    elif i != 0 and _ >= self.LIMIT_DATA:
-                #        sup.record=False
-                #else:
-                #    if _ >= self.LIMIT_DATA:
-                #        sup.record=False
-                # done hacking initial rollout
+
                 sup.rollout()
                 value_iter_r[i] += sup.get_reward() / float(self.SAMP)
 
@@ -98,16 +91,8 @@ class BaseTest():
         dagger = ScikitDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves, super_pi_actual=self.pi_actual)
         dagger.record = True
         
-        for _ in range(self.LIMIT_DATA):
+        for _ in range(1):
             dagger.rollout()
-        # hacking initial rollout
-        #if self.INITIAL_RO is None:
-        #    for _ in range(self.LIMIT_DATA):
-        #        dagger.rollout()
-        #else:
-        #    for _ in range(self.INITIAL_RO):
-        #        dagger.rollout()
-        # end hacking
 
         r = np.zeros(self.ITER)
         acc = np.zeros(self.ITER)
@@ -134,6 +119,48 @@ class BaseTest():
 
         return r, acc, loss, sup_dist_loss
                 
+
+    def beta_dagger_trial(self, mdp, learner):
+        if self.p_beta < 0:
+            raise Exception("Negative p_beta");
+        mdp.load_policy(self.policy)
+        dagger = ScikitBetaDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves, super_pi_actual=self.pi_actual)
+        dagger.record = True
+        
+        for _ in range(1):
+            dagger.rollout(1.0)
+
+        r = np.zeros(self.ITER)
+        acc = np.zeros(self.ITER)
+        loss = np.zeros(self.ITER)
+        sup_dist_loss = np.zeros(self.ITER)
+
+        for i in range(self.ITER):
+            print "     Iteration: " + str(i)
+            print "     Retraining with " + str(len(dagger.learner.data)) + ' examples'
+            beta = self.p_beta ** (i+1)
+            dagger.retrain()
+            acc[i] = dagger.learner.acc()
+
+            dagger.record = False
+            for _ in range(self.SAMP):
+                dagger.record = False
+                dagger.eval_rollout()
+                loss[i] += dagger.get_loss() / float(self.SAMP)
+                r[i] += dagger.get_reward() / float(self.SAMP)
+
+            dagger.record = True
+            for _ in range(self.LIMIT_DATA):
+                dagger.record = True
+                dagger.rollout(beta)
+
+            for _ in range(self.SAMP):
+                dagger.record = False
+                dagger.rollout_sup()
+                sup_dist_loss[i] += dagger.get_sup_loss() / float(self.SAMP)
+
+        return r, acc, loss, sup_dist_loss
+
 
 
     def run(self, *args):

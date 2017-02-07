@@ -19,16 +19,15 @@ class ScikitSupervise():
         self.super_pi_actual = super_pi_actual
 
     def rollout(self):
+        # print "\t\tsuper_pi: " + self.super_pi.__class__.__name__ + ", mdp.pi: "  + self.mdp.pi.__class__.__name__ + \
+        #             "super_pi_actual: " + self.super_pi_actual.__class__.__name__
+
         self.grid.reset_mdp()
         self.recent_rollout_states = [self.mdp.state]
         self.reward = np.zeros(self.moves)
         self.mistakes = 0
         for t in range(self.moves):
-            #if self.record:
-                #action = self.super_pi.get_next(self.mdp.state)
-                #actual_action = self.super_pi.get_actual_next(self.mdp.state)
-                #self.learner.add_datum(self.mdp.state, actual_action)
-
+            
             x_t = self.mdp.state
             self.compare_policies(x_t)
 
@@ -44,6 +43,10 @@ class ScikitSupervise():
     
 
     def rollout_sup(self):
+        """
+            Take actions according to the supervisor (whether it is noisy or not)
+            Run analytics to get the loss of the learner on the supervisor's distr
+        """
         self.grid.reset_mdp()
         self.sup_mistakes = 0
 
@@ -61,7 +64,6 @@ class ScikitSupervise():
 
             x_t_1 = self.mdp.state
 
-            # IPython.embed()
 
     def compare_policies(self, x):
         sup_a = self.super_pi.get_actual_next(x)
