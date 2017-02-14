@@ -3,9 +3,9 @@ import IPython
 import matplotlib.pyplot as plt
 import os
 
-base_dir = 'comparisons/revisited/beta_sweep/0/'
+base_dir = 'comparisons/revisited/beta_baseline7/5/'
 ref_root = 'comparisons/random2d_deter_sparse_linear'
-substr = '_20ld_-1d_70m_0.0pb_data'
+substr = '_1ld_-1d_70m_data'
 ref_substr = '_1ld_-1d_70m_data'
 
 
@@ -21,7 +21,8 @@ def normalize(directory):
     mean_dagger = np.mean(dagger_data, axis=0)
 
     maximum = np.mean(mean_value_iter)
-    minimum = min(np.amin(mean_classic_il), np.amin(mean_dagger))
+    # minimum = min(np.amin(mean_classic_il), np.amin(mean_dagger))
+    minimum = 0.0
     rang = maximum - minimum
 
     norm_value_iter = (mean_value_iter - minimum) / float(rang)
@@ -39,8 +40,8 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
     se_dagger = np.std(dagger_data, axis=0) / np.sqrt(dagger_data.shape[0])
 
     # save the normalized data for comparisons with others if needed
-    np.save('compilations/trajs_sweep_supervise/supervise_20ld.npy', classic_il_data)
-    np.save('compilations/trajs_sweep_dagger/dagger_20ld.npy', dagger_data)
+    #np.save('compilations/trajs_sweep_supervise_dt/supervise_10ld.npy', classic_il_data)
+    #np.save('compilations/trajs_sweep_dagger_dt/dagger_10ld.npy', dagger_data)
     
     x1 = range(len(mean_classic_il))
     x2 = range(len(mean_dagger))
@@ -122,10 +123,10 @@ def aggregate_acc():
     plot(np.array(classic_il_data), np.array(dagger_data), label='Loss', filename='images/tmp_acc.eps')
 
 if __name__ == '__main__':
-    aggregate()
-    # aggregate_acc()
-    # aggregate_loss()
-    # aggregate_test_loss()
+    #aggregate()
+    #aggregate_acc()
+    aggregate_loss()
+    aggregate_test_loss()
 
 
 

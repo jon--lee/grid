@@ -30,8 +30,10 @@ for data, color, name in zip(all_sups, colors, dt_comparison_names):
 
     plots.append(a)
 
-plt.ylim(0, 1)
+
+mini = max(np.min(all_sups), 0.0)
+plt.ylim(mini, 1)
 plt.xlabel('Iterations')
 plt.legend(plots, names, loc='upper center',prop={'size':12}, bbox_to_anchor=(.5, 1.12), fancybox=True, ncol=len(names))
-# plt.savefig('compilations/compile.eps', format='eps', dpi=1000)
+plt.savefig('compilations/dt_comparison.eps', format='eps', dpi=1000)
 plt.show()
