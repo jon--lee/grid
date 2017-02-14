@@ -3,9 +3,9 @@ import IPython
 import matplotlib.pyplot as plt
 import os
 
-base_dir = 'comparisons/revisited/beta_baseline7/5/'
+base_dir = 'comparisons/revisited/eps_sweep_one_instance/4/'
 ref_root = 'comparisons/random2d_deter_sparse_linear'
-substr = '_1ld_-1d_70m_data'
+substr = '_1ld_-1d_70m_0.0pb_data'
 ref_substr = '_1ld_-1d_70m_data'
 
 
@@ -40,8 +40,8 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
     se_dagger = np.std(dagger_data, axis=0) / np.sqrt(dagger_data.shape[0])
 
     # save the normalized data for comparisons with others if needed
-    #np.save('compilations/trajs_sweep_supervise_dt/supervise_10ld.npy', classic_il_data)
-    #np.save('compilations/trajs_sweep_dagger_dt/dagger_10ld.npy', dagger_data)
+    np.save('compilations/eps_sweep_one_instance/supervise_4eps.npy', classic_il_data)
+    # np.save('compilations/trajs_sweep_dagger_dt/dagger_10ld.npy', dagger_data)
     
     x1 = range(len(mean_classic_il))
     x2 = range(len(mean_dagger))
@@ -55,7 +55,10 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
     plt.errorbar(x1[:25], mean_classic_il[:25], se_classic_il[:25], linewidth=1.0, color='orange', marker='o', ecolor='black', elinewidth=1.0, markeredgecolor='orange', markeredgewidth=1, markerfacecolor='white')
     plt.errorbar(x2[:25], mean_dagger[:25], se_dagger[:25], linewidth=1.0, color='steelblue', marker='o', ecolor='black', elinewidth=1.0, markeredgecolor='steelblue', markeredgewidth=1, markerfacecolor='white')
 
-    plt.ylim(0, 1)
+    # mini = max(np.min(all_sups), 0.0)
+    # plt.ylim(mini, 1)
+
+    # # plt.ylim(0, 1)
     plt.ylabel(label)
     plt.xlabel('Iterations')
     names = ['Supervised Learning', 'DAgger']
@@ -123,10 +126,10 @@ def aggregate_acc():
     plot(np.array(classic_il_data), np.array(dagger_data), label='Loss', filename='images/tmp_acc.eps')
 
 if __name__ == '__main__':
-    #aggregate()
+    aggregate()
     #aggregate_acc()
-    aggregate_loss()
-    aggregate_test_loss()
+    # aggregate_loss()
+    # aggregate_test_loss()
 
 
 

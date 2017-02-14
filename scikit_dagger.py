@@ -46,7 +46,7 @@ class ScikitDagger():
 
         for t in range(self.moves):
             if self.record:
-                raise Exception
+                raise Exception("Should not be collecting data on test rollout")
 
             x_t = self.mdp.state
             self.compare_sup_policies(x_t)

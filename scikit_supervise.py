@@ -9,7 +9,7 @@ class ScikitSupervise():
         self.grid = grid
         self.mdp = mdp
         self.super_pi = super_pi
-        self.learner = SKEst(grid, mdp, classifier)
+        self.learner = SKEst(grid, mdp, classifier, learn_trajs=True)
         self.moves = moves
         self.reward = np.zeros(self.moves)
         self.record = False
@@ -26,6 +26,7 @@ class ScikitSupervise():
         self.recent_rollout_states = [self.mdp.state]
         self.reward = np.zeros(self.moves)
         self.mistakes = 0
+        traj = []
         for t in range(self.moves):
             
             x_t = self.mdp.state
@@ -34,6 +35,7 @@ class ScikitSupervise():
             a_t = self.grid.step(self.mdp)
             if self.record:
                 actual_action = self.super_pi.get_actual_next(x_t)
+                traj.append((x_t, a_t, actual_action, self.super_pi.EPS))
                 self.learner.add_datum(x_t, actual_action)
 
             x_t_1 = self.mdp.state
@@ -41,6 +43,9 @@ class ScikitSupervise():
             self.reward[t] = self.grid.reward(x_t, a_t, x_t_1)
             self.recent_rollout_states.append(self.mdp.state)
     
+        if self.record:
+            self.learner.add_traj(traj)
+
 
     def rollout_sup(self):
         """
@@ -52,7 +57,7 @@ class ScikitSupervise():
 
         for t in range(self.moves):
             if self.record:
-                raise Exception
+                raise Exception("Should not be collecting data on test rollout")
             x_t = self.mdp.state
             self.compare_sup_policies(x_t)
 
