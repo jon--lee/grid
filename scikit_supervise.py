@@ -1,8 +1,11 @@
 from scikit_est import SKEst
 from policy import SKPolicy
 from state import State
+from Optimize_Eps import INIT_OPT
 import numpy as np
 import IPython
+
+
 class ScikitSupervise():
 
     def __init__(self, grid, mdp, super_pi, classifier=None, moves=40, super_pi_actual=None):
@@ -14,6 +17,7 @@ class ScikitSupervise():
         self.reward = np.zeros(self.moves)
         self.record = False
         self.recent_rollout_states = []
+        self.comp_eps_traj = []
         if super_pi_actual is None:
             super_pi_actual = super_pi
         self.super_pi_actual = super_pi_actual
@@ -54,7 +58,7 @@ class ScikitSupervise():
         """
         self.grid.reset_mdp()
         self.sup_mistakes = 0
-
+        traj = []
         for t in range(self.moves):
             if self.record:
                 raise Exception("Should not be collecting data on test rollout")
@@ -69,6 +73,45 @@ class ScikitSupervise():
 
             x_t_1 = self.mdp.state
 
+    def get_current_test(self):
+        """
+            Take actions according to the supervisor (whether it is noisy or not)
+            Run analytics to get the loss of the learner on the supervisor's distr
+        """
+        self.grid.reset_mdp()
+        self.sup_mistakes = 0
+        traj = []
+        
+        for t in range(self.moves):
+            if self.record:
+                raise Exception("Should not be collecting data on test rollout")
+            
+            #sample
+            x_t = self.mdp.state
+
+            tmp_pi = self.mdp.pi
+            self.mdp.pi = self.super_pi
+            a_t = self.grid.step(self.mdp)
+            self.mdp.pi = tmp_pi
+
+            actual_action = self.super_pi.get_actual_next(x_t)
+            r_a = self.learner.predict([list(x_t.pos)])
+            traj.append((x_t, a_t, actual_action,r_a, self.super_pi.EPS))
+
+            
+
+            x_t_1 = self.mdp.state
+        
+        self.comp_eps_traj.append(traj)
+
+
+    def compute_epsilon(self):
+        int_opt = INIT_OPT(70,5)
+        eps = int_opt.grid_search_eps(self.comp_eps_traj)
+        self.comp_eps_traj = []
+
+        self.super_pi.EPS = eps
+        
 
     def compare_policies(self, x):
         sup_a = self.super_pi.get_actual_next(x)

@@ -16,32 +16,15 @@ class INIT_OPT():
 		self.T = float(T)
 		self.K = float(K)
 		
-		self.surr_losses = []
-
-		self.s_l_tf = tf.placeholder('float', shape=[None])
-		self.o_e_tf = tf.placeholder('float', shape=[None])
-
-		self.e_tf = self.weight_variable([1])
-
-		self.f_e = tf.multiply(tf.pow(self.e_tf/(self.K-1.0),self.s_l_tf),tf.pow((1.0-self.e_tf),self.T-self.s_l_tf))
-		self.f_e_o = tf.sqrt(tf.multiply(tf.pow(self.o_e_tf/(self.K-1.0),self.s_l_tf),tf.pow((1.0-self.o_e_tf),self.T-self.s_l_tf)))
-
-		self.numerator = tf.sqrt(self.f_e)
-	
-
-		self.loss = -1.0*tf.reduce_mean(tf.div(self.numerator,self.f_e_o))
-
-		self.train_step = tf.train.MomentumOptimizer(.003, .9)
-		self.train = self.train_step.minimize(self.loss)
+		
 
 
-
-
-	def compute_variables(self,trajectories):
-		#IPython.embed()
-		###
+	def compute_worst_case(self,trajectories):
+		surr_losses = []
 		avg_sur = 0.0
+		w_loss = 0.0
 		for traj in trajectories:
+			T = len(traj)
 			surr_loss = 0.0
 			save = True
 			for state,label,c_label,r_label,eps in traj:
@@ -51,10 +34,39 @@ class INIT_OPT():
 				
 
 			if(save):
-				self.surr_losses.append([surr_loss,eps])
+				surr_losses.append([surr_loss,eps])
 				avg_sur += surr_loss
-		print "avg_sur ", avg_sur/float(len(trajectories))
-		return zip(*self.surr_losses)
+				if(w_loss < surr_loss):
+					w_loss = surr_loss
+				print "SURR LOSS ",surr_loss
+		print "TIME HORIZON ",T
+		print "AVG_SUR ", avg_sur/float(len(trajectories))
+		print "WORST CASE LOSS ",w_loss
+		return w_loss
+
+
+	def compute_variables(self,trajectories):
+		#IPython.embed()
+		###
+		surr_losses = []
+		avg_sur = 0.0
+		for traj in trajectories:
+			T = len(traj)
+			surr_loss = 0.0
+			save = True
+			for state,label,c_label,r_label,eps in traj:
+				if(not c_label == r_label):
+					surr_loss += 1.0
+				
+				
+
+			if(save):
+				surr_losses.append([surr_loss,eps])
+				avg_sur += surr_loss
+				print "SURR LOSS ",surr_loss
+		print "TIME HORIZON ",T
+		print "AVG_SUR ", avg_sur/float(len(trajectories))
+		return zip(*surr_losses)
 
 
 	def grid_search_eps(self,trajectories,disctritzed = 0.1):
@@ -64,20 +76,34 @@ class INIT_OPT():
 		e_range = np.linspace(0.0,1.0,num=num_eps)
 
 		loss,o_eps = self.compute_variables(trajectories)
+
+		w_loss = self.compute_worst_case(trajectories)+self.T*1.0/np.sqrt(20)
+
 		sol = []
 		for e in e_range:
-			total = 0.0
-			for i in range(len(loss)):
-				print loss[i]
-				num = np.sqrt(((e/(self.K-1.0))**loss[i])*((1.0-e)**(self.T-loss[i])))
-				denom = ((o_eps[i]/(self.K-1.0))**loss[i])*((1.0-o_eps[i])**(self.T-loss[i]))
 
-				total += num/denom
-
+			total = np.sqrt(((e/(self.K-1.0))**w_loss)*((1.0-e)**(self.T-w_loss)))
 			sol.append(total)
+
+		best_eps = np.max(sol)
+
+		#upper bound on robot's distributino 
+
+
+
+			# total = 0.0
+			# for i in range(len(loss)):
+				
+			# 	num = np.sqrt(((e/(self.K-1.0))**loss[i])*((1.0-e)**(self.T-loss[i])))
+			# 	denom = ((o_eps[i]/(self.K-1.0))**loss[i])*((1.0-o_eps[i])**(self.T-loss[i]))
+
+			# 	total += num/denom
+
+			
 
 		idx = np.argmax(sol)
 		print sol
+		print "PLAYING ",e_range[idx]
 
 		return e_range[idx]
 

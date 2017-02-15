@@ -1,5 +1,8 @@
 
+import sys
+sys.path.append('/Users/michael/LfD/jon_grid/grid')
 from base_test import BaseTest
+
 import itertools
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import LinearSVC
@@ -10,7 +13,7 @@ import plot_class
 import random
 import scenarios
 from gridworld import HighVarInitStateGrid, LowVarInitStateGrid, Grid
-from policy import NoisyPolicy10 as EpsPolicy         # type of policy (plain, noisy, etc.)
+from policy import NoisyPolicy4 as EpsPolicy         # type of policy (plain, noisy, etc.)
 import numpy as np
 from mdp import ClassicMDP
 import random_scen
@@ -20,7 +23,7 @@ import uniform_param
 class RandomTest(BaseTest):
 
     
-    def vanilla_supervise(self):
+    def init_supervise(self):
         mdp = ClassicMDP(EpsPolicy(self.grid), self.grid)
         if not os.path.isfile(self.policy):
             mdp.value_iteration()
@@ -42,7 +45,7 @@ class RandomTest(BaseTest):
                 dt = LinearSVC()
             else:
                 dt = DecisionTreeClassifier(max_depth=self.DEPTH)
-            value_iter_r, classic_il_r, acc, loss, test_loss = self.supervise_trial(mdp, dt)
+            value_iter_r, classic_il_r, acc, loss, test_loss = self.init_trial(mdp, dt)
             
             value_iter_data[t,:] = value_iter_r            
             classic_il_data[t,:] = classic_il_r
@@ -112,7 +115,7 @@ class RandomTest(BaseTest):
         
 
 
-        value_iter_data, classic_il_data, classic_il_acc, classic_il_loss, classic_il_test_loss = self.vanilla_supervise()
+        value_iter_data, classic_il_data, classic_il_acc, classic_il_loss, classic_il_test_loss = self.init_supervise()
         dagger_data, dagger_acc, dagger_loss, dagger_test_loss = self.vanilla_dagger()
 
 
@@ -134,25 +137,24 @@ class RandomTest(BaseTest):
         analysis.get_perf(classic_il_data)
         analysis.get_perf(dagger_data)
 
-        analysis.plot(names = ['Value iteration', 'Supervise', 'DAgger'], filename=self.comparisons_directory + 'reward_comparison.eps')#, ylims=[-60, 100])
+        analysis.plot(names = ['Value iteration', 'Supervise','DAgger'], filename=self.comparisons_directory + 'reward_comparison.eps')#, ylims=[-60, 100])
 
         acc_analysis = Analysis(H, W, self.ITER, rewards = self.grid.reward_states, sinks=self.grid.sink_states, desc="Accuracy comparison")
         acc_analysis.get_perf(classic_il_acc)
-        acc_analysis.get_perf(dagger_acc)
-
-        acc_analysis.plot(names = ['Supervise Acc.', 'DAgger Acc.'], label='Accuracy', filename=self.comparisons_directory + 'acc_comparison.eps', ylims=[0,1])
+       
+        acc_analysis.plot(names = ['Supervise Acc.','DAgger'], label='Accuracy', filename=self.comparisons_directory + 'acc_comparison.eps', ylims=[0,1])
         
         loss_analysis = Analysis(H, W, self.ITER, rewards=rewards, sinks=sinks, desc="Loss plot")
         loss_analysis.get_perf(classic_il_loss)
-        loss_analysis.get_perf(dagger_loss)
+        
 
-        loss_analysis.plot(names = ['Supervise loss', 'DAgger loss'], label='Loss', filename=self.comparisons_directory + 'loss_plot.eps', ylims=[0, 1])
+        loss_analysis.plot(names = ['Supervise loss','DAgger'], label='Loss', filename=self.comparisons_directory + 'loss_plot.eps', ylims=[0, 1])
 
         test_loss_analysis = Analysis(H, W, self.ITER, rewards=rewards, sinks=sinks, desc='Sup Loss plot')
         test_loss_analysis.get_perf(classic_il_test_loss)
-        test_loss_analysis.get_perf(dagger_test_loss)
+      
 
-        test_loss_analysis.plot(names = ['Supervise Test Loss', 'DAgger Test loss'], label='Test Loss', filename=self.comparisons_directory + 'test_loss_plot.eps', ylims=[0, 1])
+        test_loss_analysis.plot(names = ['Supervise Test Loss','DAgger'], label='Test Loss', filename=self.comparisons_directory + 'test_loss_plot.eps', ylims=[0, 1])
         
         
         return
@@ -184,6 +186,7 @@ if __name__ == '__main__':
     ITER = uniform_param.ITER
     TRIALS = uniform_param.TRIALS
     SAMP = uniform_param.SAMP
+    INTIT_TEST = uniform_param.INIT_SAMPLES 
 
     ld_set = uniform_param.ld_set
     d_set = uniform_param.d_set
@@ -192,14 +195,16 @@ if __name__ == '__main__':
     
     params = list(itertools.product(ld_set, d_set, moves, p_beta_set)) # cartesian product of all settings
 
-    for i, filename in enumerate(sorted(os.listdir('scenarios_sparse2d/'))):                          # path to pickled scenarios to test on
-        if i >= 1:                                                                                    # in case you want to only test on subset of scenarios (recommended because faster)
+    for i, filename in enumerate(sorted(os.listdir('scenarios_sparse2d/'))):    
+        print filename 
+        print i                     # path to pickled scenarios to test on
+        if i >= 2:                                                                                    # in case you want to only test on subset of scenarios (recommended because faster)
             break
         for i in range(len(params)):
             if filename.endswith('.p'):
-                policy = 'policies/rand2d_linear_noisy10_' + str(filename)                            # path to optimal policy: convention for policy paths is 'policies/[description] + [scenario name]'
+                policy = 'policies/rand2d_linear_noisy4_' + str(filename)                            # path to optimal policy: convention for policy paths is 'policies/[description] + [scenario name]'
                 scenario = random_scen.load('scenarios_sparse2d/' + filename)
-                test = RandomTest('revisited/eps_sweep_one_instance/10/' + filename, 40, ITER, TRIALS, SAMP)      # (ignore '40'), first parameter is where data/plots are saved within ./comparisons/
+                test = RandomTest('revisited/init_full/4/' + filename, 40, ITER, TRIALS, SAMP,INTIT_TEST)      # (ignore '40'), first parameter is where data/plots are saved within ./comparisons/
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)

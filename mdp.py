@@ -6,6 +6,7 @@ import state
 import random
 import pickle
 import IPython
+import os
 
 
 class ClassicMDP():
@@ -133,6 +134,8 @@ class ClassicMDP():
 
 
     def save_policy(self, filename='policy.p'):
+        # if not os.path.exists(filename):
+        #     os.makedirs('policies')
         f = open(filename, 'w')
         pickle.dump(self.pi, f)
         f.close()

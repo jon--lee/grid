@@ -21,10 +21,11 @@ import numpy as np
 
 class BaseTest():
 
-    def __init__(self, base_name, moves, ITER, TRIALS, SAMP):
+    def __init__(self, base_name, moves, ITER, TRIALS, SAMP, INIT_TEST):
         self.ITER = ITER
         self.TRIALS = TRIALS
         self.SAMP = SAMP
+        self.INIT_TEST = INIT_TEST
         # self.INITIAL_RO = None
         self.moves = moves
         self.p_beta = -1.0
@@ -83,6 +84,53 @@ class BaseTest():
                 sup_dist_loss[i] += sup.get_sup_loss() / float(self.SAMP)
                 
         return value_iter_r, classic_il_r, acc, loss, sup_dist_loss
+
+
+    def init_trial(self, mdp, learner):
+        mdp.load_policy(self.policy)
+        sup = ScikitSupervise(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves, super_pi_actual=self.pi_actual)
+        sup.super_pi.EPS = 0.8
+        value_iter_r = np.zeros(self.ITER)
+        classic_il_r = np.zeros(self.ITER)
+        acc = np.zeros(self.ITER)
+        loss = np.zeros(self.ITER)
+        sup_dist_loss = np.zeros(self.ITER)
+        
+        for i in range(self.ITER):
+            print "     Iteration: " + str(i)
+            mdp.pi = self.value_iter_pi
+            sup.record = True
+            for _ in range(self.SAMP):
+                if _ >= self.LIMIT_DATA or (i == 0 and _ >= 1):
+                    sup.record=False
+
+                sup.rollout()
+                value_iter_r[i] += sup.get_reward() / float(self.SAMP)
+
+            sup.record = False
+            print "     Training on " + str(len(sup.learner.data)) + ' examples'
+            sup.train()
+
+            for _ in range(self.INIT_TEST):
+                sup.get_current_test()
+
+            
+            sup.compute_epsilon()
+
+            acc[i] = sup.learner.acc()
+            for _ in range(self.SAMP):
+                sup.record = False
+                sup.rollout()
+                loss[i] += sup.get_loss() / float(self.SAMP)
+                classic_il_r[i] += sup.get_reward() / float(self.SAMP)
+
+            for _ in range(self.SAMP):
+                sup.record = False
+                sup.rollout_sup()
+                sup_dist_loss[i] += sup.get_sup_loss() / float(self.SAMP)
+                
+        return value_iter_r, classic_il_r, acc, loss, sup_dist_loss
+
 
 
 
