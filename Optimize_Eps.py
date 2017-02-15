@@ -77,7 +77,7 @@ class INIT_OPT():
 
 		loss,o_eps = self.compute_variables(trajectories)
 
-		w_loss = self.compute_worst_case(trajectories)+self.T*1.0/np.sqrt(20)
+		w_loss = self.compute_worst_case(trajectories)#+self.T*1.0/np.sqrt(20)
 
 		sol = []
 		for e in e_range:

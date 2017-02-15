@@ -12,6 +12,7 @@ class ScikitSupervise():
         self.grid = grid
         self.mdp = mdp
         self.super_pi = super_pi
+
         self.learner = SKEst(grid, mdp, classifier, learn_trajs=True)
         self.moves = moves
         self.reward = np.zeros(self.moves)
@@ -59,6 +60,9 @@ class ScikitSupervise():
         self.grid.reset_mdp()
         self.sup_mistakes = 0
         traj = []
+      
+        #IPython.embed()
+
         for t in range(self.moves):
             if self.record:
                 raise Exception("Should not be collecting data on test rollout")
@@ -73,6 +77,8 @@ class ScikitSupervise():
 
             x_t_1 = self.mdp.state
 
+        
+
     def get_current_test(self):
         """
             Take actions according to the supervisor (whether it is noisy or not)
@@ -81,7 +87,7 @@ class ScikitSupervise():
         self.grid.reset_mdp()
         self.sup_mistakes = 0
         traj = []
-        
+      
         for t in range(self.moves):
             if self.record:
                 raise Exception("Should not be collecting data on test rollout")
@@ -102,6 +108,7 @@ class ScikitSupervise():
 
             x_t_1 = self.mdp.state
         
+        
         self.comp_eps_traj.append(traj)
 
 
@@ -111,6 +118,8 @@ class ScikitSupervise():
         self.comp_eps_traj = []
 
         self.super_pi.EPS = eps
+
+        return eps
         
 
     def compare_policies(self, x):

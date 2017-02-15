@@ -86,12 +86,13 @@ class BaseTest():
         return value_iter_r, classic_il_r, acc, loss, sup_dist_loss
 
 
-    def init_trial(self, mdp, learner):
+    def init_trial(self, mdp, learner,eps):
         mdp.load_policy(self.policy)
         sup = ScikitSupervise(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves, super_pi_actual=self.pi_actual)
-        sup.super_pi.EPS = 0.8
+        sup.super_pi.EPS = eps
         value_iter_r = np.zeros(self.ITER)
         classic_il_r = np.zeros(self.ITER)
+        eps_played = np.zeros(self.ITER)
         acc = np.zeros(self.ITER)
         loss = np.zeros(self.ITER)
         sup_dist_loss = np.zeros(self.ITER)
@@ -115,7 +116,7 @@ class BaseTest():
                 sup.get_current_test()
 
             
-            sup.compute_epsilon()
+            eps_played[i] = sup.compute_epsilon()
 
             acc[i] = sup.learner.acc()
             for _ in range(self.SAMP):

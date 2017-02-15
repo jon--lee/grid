@@ -45,7 +45,7 @@ class RandomTest(BaseTest):
                 dt = LinearSVC()
             else:
                 dt = DecisionTreeClassifier(max_depth=self.DEPTH)
-            value_iter_r, classic_il_r, acc, loss, test_loss = self.init_trial(mdp, dt)
+            value_iter_r, classic_il_r, acc, loss, test_loss = self.init_trial(mdp, dt,0.4)
             
             value_iter_data[t,:] = value_iter_r            
             classic_il_data[t,:] = classic_il_r

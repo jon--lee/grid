@@ -7,7 +7,6 @@
 ITER = 15
 TRIALS = 10
 SAMP = 10
-
 INIT_SAMPLES = 20
 
 
