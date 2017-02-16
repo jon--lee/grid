@@ -38,10 +38,10 @@ class INIT_OPT():
 				avg_sur += surr_loss
 				if(w_loss < surr_loss):
 					w_loss = surr_loss
-				print "SURR LOSS ",surr_loss
-		print "TIME HORIZON ",T
-		print "AVG_SUR ", avg_sur/float(len(trajectories))
-		print "WORST CASE LOSS ",w_loss
+				#print "SURR LOSS ",surr_loss
+		#print "TIME HORIZON ",T
+		#print "AVG_SUR ", avg_sur/float(len(trajectories))
+		#print "WORST CASE LOSS ",w_loss
 		return w_loss
 
 
@@ -63,9 +63,9 @@ class INIT_OPT():
 			if(save):
 				surr_losses.append([surr_loss,eps])
 				avg_sur += surr_loss
-				print "SURR LOSS ",surr_loss
-		print "TIME HORIZON ",T
-		print "AVG_SUR ", avg_sur/float(len(trajectories))
+				#print "SURR LOSS ",surr_loss
+		#print "TIME HORIZON ",T
+		#print "AVG_SUR ", avg_sur/float(len(trajectories))
 		return zip(*surr_losses)
 
 
@@ -102,7 +102,7 @@ class INIT_OPT():
 			
 
 		idx = np.argmax(sol)
-		print sol
+		#print sol
 		print "PLAYING ",e_range[idx]
 
 		return e_range[idx]

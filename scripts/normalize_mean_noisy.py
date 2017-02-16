@@ -3,9 +3,9 @@ import IPython
 import matplotlib.pyplot as plt
 import os
 
-base_dir = 'comparisons/revisited/eps_sweep_one_instance/4/'
+base_dir = 'comparisons/revisited/init_full/2/'
 ref_root = 'comparisons/random2d_deter_sparse_linear'
-substr = '_1ld_-1d_70m_0.0pb_data'
+substr = '_20ld_4d_70m_0.0pb_data'
 ref_substr = '_1ld_-1d_70m_data'
 
 
@@ -40,7 +40,7 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
     se_dagger = np.std(dagger_data, axis=0) / np.sqrt(dagger_data.shape[0])
 
     # save the normalized data for comparisons with others if needed
-    np.save('compilations/eps_sweep_one_instance/supervise_4eps.npy', classic_il_data)
+    #np.save('compilations/eps_sweep_one_instance/supervise_4eps.npy', classic_il_data)
     # np.save('compilations/trajs_sweep_dagger_dt/dagger_10ld.npy', dagger_data)
     
     x1 = range(len(mean_classic_il))
@@ -123,13 +123,13 @@ def aggregate_acc():
                 # print sub_dir            
             except:
                 pass
-    plot(np.array(classic_il_data), np.array(dagger_data), label='Loss', filename='images/tmp_acc.eps')
+    plot(np.array(classic_il_data), np.array(dagger_data), label='Acc', filename='images/tmp_acc.eps')
 
 if __name__ == '__main__':
     aggregate()
     #aggregate_acc()
-    # aggregate_loss()
-    # aggregate_test_loss()
+    #aggregate_loss()
+    #aggregate_test_loss()
 
 
 
