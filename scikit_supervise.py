@@ -17,6 +17,7 @@ class ScikitSupervise():
         self.moves = moves
         self.reward = np.zeros(self.moves)
         self.record = False
+        self.update_model = True
         self.recent_rollout_states = []
         self.comp_eps_traj = []
         if super_pi_actual is None:
@@ -95,10 +96,10 @@ class ScikitSupervise():
             #sample
             x_t = self.mdp.state
 
-            tmp_pi = self.mdp.pi
-            self.mdp.pi = self.super_pi
+            # tmp_pi = self.mdp.pi
+            # self.mdp.pi = self.super_pi
             a_t = self.grid.step(self.mdp)
-            self.mdp.pi = tmp_pi
+            # self.mdp.pi = tmp_pi
 
             actual_action = self.super_pi.get_actual_next(x_t)
             r_a = self.learner.predict([list(x_t.pos)])
@@ -113,13 +114,16 @@ class ScikitSupervise():
 
 
     def compute_epsilon(self):
-        int_opt = INIT_OPT(70,5)
-        eps = int_opt.grid_search_eps(self.comp_eps_traj)
-        self.comp_eps_traj = []
+        if(self.update_model):
+            int_opt = INIT_OPT(70,5)
+            eps = int_opt.grid_search_eps(self.comp_eps_traj)
+            self.comp_eps_traj = []
 
-        self.super_pi.EPS = eps
+            self.super_pi.EPS = eps
+            if(eps < 0.15):
+                self.update_model = False
 
-        return eps
+        return self.super_pi.EPS
         
 
     def compare_policies(self, x):
@@ -142,7 +146,9 @@ class ScikitSupervise():
         return float(self.sup_mistakes) / float(self.moves)
 
     def train(self):
-        self.learner.fit()
+        if(self.update_model):
+            self.learner.fit()
+
         self.mdp.pi = SKPolicy(self.learner)
         self.record = False
 

@@ -99,6 +99,7 @@ class BaseTest():
         
         for i in range(self.ITER):
             print "     Iteration: " + str(i)
+            print "CURRENT EPS IN SUP ",sup.super_pi.EPS
             mdp.pi = self.value_iter_pi
             sup.record = True
             for _ in range(self.SAMP):
@@ -139,6 +140,7 @@ class BaseTest():
         mdp.load_policy(self.policy)
         dagger = ScikitDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves, super_pi_actual=self.pi_actual)
         dagger.record = True
+        update_model = True
         
         for _ in range(1):
             dagger.rollout()
@@ -151,7 +153,8 @@ class BaseTest():
         for i in range(self.ITER):
             print "     Iteration: " + str(i)
             print "     Retraining with " + str(len(dagger.learner.data)) + ' examples'
-            dagger.retrain()
+            if(update_model):
+                dagger.retrain()
             acc[i] = dagger.learner.acc()
             dagger.record = True
             for _ in range(self.SAMP):
@@ -160,6 +163,8 @@ class BaseTest():
                 dagger.rollout()
                 loss[i] += dagger.get_loss() / float(self.SAMP)
                 r[i] += dagger.get_reward() / float(self.SAMP)
+                if(r[i] > 480):
+                    update_model = False
          
             for _ in range(self.SAMP):
                 dagger.record = False

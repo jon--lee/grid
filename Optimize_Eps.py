@@ -19,7 +19,7 @@ class INIT_OPT():
 		
 
 
-	def compute_worst_case(self,trajectories):
+	def compute_avg_case(self,trajectories):
 		surr_losses = []
 		avg_sur = 0.0
 		w_loss = 0.0
@@ -41,8 +41,8 @@ class INIT_OPT():
 				print "SURR LOSS ",surr_loss
 		print "TIME HORIZON ",T
 		print "AVG_SUR ", avg_sur/float(len(trajectories))
-		print "WORST CASE LOSS ",w_loss
-		return w_loss
+		#print "WORST CASE LOSS ",w_loss
+		return avg_sur/float(len(trajectories))#w_loss
 
 
 	def compute_variables(self,trajectories):
@@ -63,7 +63,7 @@ class INIT_OPT():
 			if(save):
 				surr_losses.append([surr_loss,eps])
 				avg_sur += surr_loss
-				print "SURR LOSS ",surr_loss
+				#print "SURR LOSS ",surr_loss
 		print "TIME HORIZON ",T
 		print "AVG_SUR ", avg_sur/float(len(trajectories))
 		return zip(*surr_losses)
@@ -77,12 +77,12 @@ class INIT_OPT():
 
 		loss,o_eps = self.compute_variables(trajectories)
 
-		w_loss = self.compute_worst_case(trajectories)#+self.T*1.0/np.sqrt(20)
+		avg_loss = self.compute_avg_case(trajectories)#+self.T*1.0/np.sqrt(20)
 
 		sol = []
 		for e in e_range:
 
-			total = np.sqrt(((e/(self.K-1.0))**w_loss)*((1.0-e)**(self.T-w_loss)))
+			total = np.sqrt(((e/(self.K-1.0))**avg_loss)*((1.0-e)**(self.T-avg_loss)))
 			sol.append(total)
 
 		best_eps = np.max(sol)
@@ -90,22 +90,24 @@ class INIT_OPT():
 		#upper bound on robot's distributino 
 
 
-
-			# total = 0.0
-			# for i in range(len(loss)):
+		# for e in e_range:
+		# 	total = 0.0
+		# 	for i in range(len(loss)):
 				
-			# 	num = np.sqrt(((e/(self.K-1.0))**loss[i])*((1.0-e)**(self.T-loss[i])))
-			# 	denom = ((o_eps[i]/(self.K-1.0))**loss[i])*((1.0-o_eps[i])**(self.T-loss[i]))
+		# 		num = ((e/(self.K-1.0))**loss[i])*((1.0-e)**(self.T-loss[i]))
 
-			# 	total += num/denom
+		# 		#denom = ((o_eps[i]/(self.K-1.0))**loss[i])*((1.0-o_eps[i])**(self.T-loss[i]))
 
+		# 		total += num
+
+		# 	sol.append(total)
 			
 
 		idx = np.argmax(sol)
 		print sol
 		print "PLAYING ",e_range[idx]
 
-		return e_range[idx]
+		return 0.1#e_range[idx]
 
 
 
