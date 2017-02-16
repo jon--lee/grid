@@ -49,7 +49,7 @@ class BaseTest():
 
     def supervise_trial(self, mdp, learner):
         mdp.load_policy(self.policy)
-        sup = ScikitSupervise(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves, super_pi_actual=self.pi_actual)
+        sup = ScikitSupervise(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves, super_pi_actual=None)
         
         value_iter_r = np.zeros(self.ITER)
         classic_il_r = np.zeros(self.ITER)
@@ -88,7 +88,7 @@ class BaseTest():
 
     def init_trial(self, mdp, learner,eps):
         mdp.load_policy(self.policy)
-        sup = ScikitSupervise(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves, super_pi_actual=self.pi_actual)
+        sup = ScikitSupervise(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves, super_pi_actual=None)
         sup.super_pi.EPS = eps
         value_iter_r = np.zeros(self.ITER)
         classic_il_r = np.zeros(self.ITER)
@@ -96,7 +96,7 @@ class BaseTest():
         acc = np.zeros(self.ITER)
         loss = np.zeros(self.ITER)
         sup_dist_loss = np.zeros(self.ITER)
-        
+        print "Starting trial with eps: " + str(sup.super_pi.EPS) + ", " + str(self.value_iter_pi)
         for i in range(self.ITER):
             print "     Iteration: " + str(i)
             print "CURRENT EPS IN SUP ",sup.super_pi.EPS
@@ -118,6 +118,7 @@ class BaseTest():
 
             
             eps_played[i] = sup.compute_epsilon()
+            print "eps played iteration " + str(i) + ": " + str(eps_played[i])
 
             acc[i] = sup.learner.acc()
             for _ in range(self.SAMP):
@@ -131,14 +132,14 @@ class BaseTest():
                 sup.rollout_sup()
                 sup_dist_loss[i] += sup.get_sup_loss() / float(self.SAMP)
                 
-        return value_iter_r, classic_il_r, acc, loss, sup_dist_loss
+        return value_iter_r, classic_il_r, acc, loss, sup_dist_loss, eps_played
 
 
 
 
     def dagger_trial(self, mdp, learner):
         mdp.load_policy(self.policy)
-        dagger = ScikitDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves, super_pi_actual=self.pi_actual)
+        dagger = ScikitDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves, super_pi_actual=None)
         dagger.record = True
         update_model = True
         
@@ -180,7 +181,7 @@ class BaseTest():
         mdp.load_policy(self.policy)
         dagger = ScikitBetaDagger(self.grid, mdp, self.value_iter_pi, learner, moves=self.moves, super_pi_actual=self.pi_actual)
         dagger.record = True
-        
+        update_model = True
         for _ in range(1):
             dagger.rollout(1.0)
 
@@ -194,7 +195,10 @@ class BaseTest():
             print "     Retraining with " + str(len(dagger.learner.data)) + ' examples'
             beta = self.p_beta ** (i+1)
             dagger.retrain()
-            acc[i] = dagger.learner.acc()
+            if(update_model):
+                acc[i] = dagger.learner.acc()
+            else: 
+                acc[i] = acc[i-1]
 
             dagger.record = False
             for _ in range(self.SAMP):
@@ -202,6 +206,8 @@ class BaseTest():
                 dagger.eval_rollout()
                 loss[i] += dagger.get_loss() / float(self.SAMP)
                 r[i] += dagger.get_reward() / float(self.SAMP)
+                if(r[i] > 480):
+                    update_model = False
 
             dagger.record = True
             for _ in range(self.LIMIT_DATA):

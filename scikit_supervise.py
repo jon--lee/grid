@@ -96,10 +96,12 @@ class ScikitSupervise():
             #sample
             x_t = self.mdp.state
 
-            # tmp_pi = self.mdp.pi
-            # self.mdp.pi = self.super_pi
+
+            #tmp_pi = self.mdp.pi
+            #self.mdp.pi = self.super_pi
             a_t = self.grid.step(self.mdp)
-            # self.mdp.pi = tmp_pi
+            #self.mdp.pi = tmp_pi
+
 
             actual_action = self.super_pi.get_actual_next(x_t)
             r_a = self.learner.predict([list(x_t.pos)])
