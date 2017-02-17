@@ -19,7 +19,7 @@ INIT_SAMPLES = 20
 
 # specify settings (i.e. you can add moves = [30, 70] #to get tests with 30 and 70 moves)
 ld_set = [10] #(limit_data) number of trajectories per iteration added to dataset
-d_set = [-1] #depth of decision tree (-1 for LinearSVC)
+d_set = [3, 4] #depth of decision tree (-1 for LinearSVC)
 moves = [70] #number of steps in each trajectory
 # p_beta_set = [0.0, .3]            #starting beta parameter for dagger
 # p_beta_set = [.5, .8, 1.0]

@@ -122,8 +122,8 @@ class ScikitSupervise():
             self.comp_eps_traj = []
 
             self.super_pi.EPS = eps
-            if(eps < 0.15):
-                self.update_model = False
+            #if(eps < 0.15):
+            #    self.update_model = False
 
         return self.super_pi.EPS
         

@@ -38,6 +38,7 @@ class RandomTest(BaseTest):
         classic_il_acc  =   np.zeros([self.TRIALS, self.ITER])
         classic_il_loss =   np.zeros([self.TRIALS, self.ITER])
         classic_il_test_loss = np.zeros([self.TRIALS, self.ITER])
+        classic_il_eps  =   np.zeros([self.TRIALS, self.ITER])
 
         for t in range(self.TRIALS):
             print "IL Trial: " + str(t)
@@ -55,9 +56,10 @@ class RandomTest(BaseTest):
             classic_il_acc[t,:] = acc
             classic_il_loss[t,:] = loss
             classic_il_test_loss[t,:] = test_loss
+            classic_il_eps[t, :] = eps
 
 
-        return value_iter_data, classic_il_data, classic_il_acc, classic_il_loss, classic_il_test_loss
+        return value_iter_data, classic_il_data, classic_il_acc, classic_il_loss, classic_il_test_loss, classic_il_eps
             
 
     def vanilla_dagger(self):
@@ -118,9 +120,10 @@ class RandomTest(BaseTest):
         
 
 
-        value_iter_data, classic_il_data, classic_il_acc, classic_il_loss, classic_il_test_loss = self.init_supervise()
+        value_iter_data, classic_il_data, classic_il_acc, classic_il_loss, classic_il_test_loss, classic_il_eps = self.init_supervise()
         dagger_data, dagger_acc, dagger_loss, dagger_test_loss = self.vanilla_dagger()
 
+        np.save(self.data_directory + 'eps_data.npy', classic_il_eps)
 
         np.save(self.data_directory + 'sup_data.npy', value_iter_data)
         np.save(self.data_directory + 'classic_il_data.npy', classic_il_data)
