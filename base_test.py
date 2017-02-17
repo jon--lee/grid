@@ -113,11 +113,12 @@ class BaseTest():
             print "     Training on " + str(len(sup.learner.data)) + ' examples'
             sup.train()
 
-            for _ in range(self.INIT_TEST):
-                sup.get_current_test()
-
-            
-            eps_played[i] = sup.compute_epsilon()
+            if i != 0:
+                for _ in range(self.INIT_TEST):
+                    sup.get_current_test()
+                eps_played[i] = sup.compute_epsilon()
+            else:
+                eps_played[i] = sup.super_pi.EPS
             print "eps played iteration " + str(i) + ": " + str(eps_played[i])
 
             acc[i] = sup.learner.acc()
@@ -164,8 +165,8 @@ class BaseTest():
                 dagger.rollout()
                 loss[i] += dagger.get_loss() / float(self.SAMP)
                 r[i] += dagger.get_reward() / float(self.SAMP)
-                if(r[i] > 480):
-                    update_model = False
+            #if(loss[i] < 3.0 / self.moves):
+            #    update_model = False
          
             for _ in range(self.SAMP):
                 dagger.record = False
@@ -194,11 +195,11 @@ class BaseTest():
             print "     Iteration: " + str(i)
             print "     Retraining with " + str(len(dagger.learner.data)) + ' examples'
             beta = self.p_beta ** (i+1)
-            dagger.retrain()
             if(update_model):
-                acc[i] = dagger.learner.acc()
-            else: 
-                acc[i] = acc[i-1]
+                dagger.retrain()
+            acc[i] = dagger.learner.acc()
+            #else: 
+            #    acc[i] = acc[i-1]
 
             dagger.record = False
             for _ in range(self.SAMP):
@@ -206,8 +207,6 @@ class BaseTest():
                 dagger.eval_rollout()
                 loss[i] += dagger.get_loss() / float(self.SAMP)
                 r[i] += dagger.get_reward() / float(self.SAMP)
-                if(r[i] > 480):
-                    update_model = False
 
             dagger.record = True
             for _ in range(self.LIMIT_DATA):

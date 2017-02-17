@@ -201,7 +201,7 @@ if __name__ == '__main__':
     for i, filename in enumerate(sorted(os.listdir('scenarios_sparse2d/'))):    
         print filename 
         print i                     # path to pickled scenarios to test on
-        if i >= 3:                                                                                    # in case you want to only test on subset of scenarios (recommended because faster)
+        if i >= 1:                                                                                    # in case you want to only test on subset of scenarios (recommended because faster)
             break
         for i in range(len(params)):
             if filename.endswith('.p'):

@@ -3,9 +3,9 @@ import IPython
 import matplotlib.pyplot as plt
 import os
 
-base_dir = 'comparisons/revisited/init_full/2/'
+base_dir = 'comparisons/revisited/feb16/6-1/'
 ref_root = 'comparisons/random2d_deter_sparse_linear'
-substr = '_20ld_4d_70m_0.0pb_data'
+substr = '_10ld_-1d_70m_0.0pb_data'
 ref_substr = '_1ld_-1d_70m_data'
 
 

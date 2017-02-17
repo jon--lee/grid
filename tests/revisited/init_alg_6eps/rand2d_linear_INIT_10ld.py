@@ -30,6 +30,7 @@ class RandomTest(BaseTest):
             mdp.save_policy(self.policy)
         mdp.load_policy(self.policy)
         self.original_EPS = mdp.pi.EPS
+        print "self ",self.original_EPS
         self.value_iter_pi = mdp.pi
 
         value_iter_data =   np.zeros([self.TRIALS, self.ITER])
@@ -37,8 +38,7 @@ class RandomTest(BaseTest):
         classic_il_acc  =   np.zeros([self.TRIALS, self.ITER])
         classic_il_loss =   np.zeros([self.TRIALS, self.ITER])
         classic_il_test_loss = np.zeros([self.TRIALS, self.ITER])
-        classic_il_eps = np.zeros([self.TRIALS, self.ITER])
-        
+
         for t in range(self.TRIALS):
             print "IL Trial: " + str(t)
             print "***DO NOT TERMINATE THIS PROGRAM***"
@@ -48,17 +48,16 @@ class RandomTest(BaseTest):
             else:
                 dt = DecisionTreeClassifier(max_depth=self.DEPTH)
             print self.original_EPS
-            value_iter_r, classic_il_r, acc, loss, test_loss, eps_played = self.init_trial(mdp, dt,self.original_EPS)
+            value_iter_r, classic_il_r, acc, loss, test_loss,eps = self.init_trial(mdp, dt,self.original_EPS)
             
             value_iter_data[t,:] = value_iter_r            
             classic_il_data[t,:] = classic_il_r
             classic_il_acc[t,:] = acc
             classic_il_loss[t,:] = loss
             classic_il_test_loss[t,:] = test_loss
-            classic_il_eps[t,:] = eps_played
 
 
-        return value_iter_data, classic_il_data, classic_il_acc, classic_il_loss, classic_il_test_loss, classic_il_eps
+        return value_iter_data, classic_il_data, classic_il_acc, classic_il_loss, classic_il_test_loss
             
 
     def vanilla_dagger(self):
@@ -119,11 +118,9 @@ class RandomTest(BaseTest):
         
 
 
-        value_iter_data, classic_il_data, classic_il_acc, classic_il_loss, classic_il_test_loss, classic_il_eps = self.init_supervise()
+        value_iter_data, classic_il_data, classic_il_acc, classic_il_loss, classic_il_test_loss = self.init_supervise()
         dagger_data, dagger_acc, dagger_loss, dagger_test_loss = self.vanilla_dagger()
 
-        np.save(self.data_directory + 'eps_data.npy', classic_il_eps)
-        print classic_il_eps
 
         np.save(self.data_directory + 'sup_data.npy', value_iter_data)
         np.save(self.data_directory + 'classic_il_data.npy', classic_il_data)
@@ -136,32 +133,31 @@ class RandomTest(BaseTest):
         np.save(self.data_directory + 'classic_il_loss.npy', classic_il_loss)
 
         np.save(self.data_directory + 'classic_il_test_loss.npy', classic_il_test_loss)
-        np.save(self.data_directory + 'dagger_test_loss.npy', dagger_test_loss)       
+        np.save(self.data_directory + 'dagger_test_loss.npy', dagger_test_loss)
 
         analysis = Analysis(H, W, self.ITER, rewards=rewards, sinks=sinks, desc="General comparison")
         analysis.get_perf(value_iter_data)
         analysis.get_perf(classic_il_data)
         analysis.get_perf(dagger_data)
 
-        analysis.plot(names = ['Value iteration', 'Supervise', 'DAgger'], filename=self.comparisons_directory + 'reward_comparison.eps')#, ylims=[-60, 100])
+        analysis.plot(names = ['Value iteration', 'Supervise','DAgger'], filename=self.comparisons_directory + 'reward_comparison.eps')#, ylims=[-60, 100])
 
         acc_analysis = Analysis(H, W, self.ITER, rewards = self.grid.reward_states, sinks=self.grid.sink_states, desc="Accuracy comparison")
         acc_analysis.get_perf(classic_il_acc)
-        acc_analysis.get_perf(dagger_acc)
-
-        acc_analysis.plot(names = ['Supervise Acc.', 'DAgger Acc.'], label='Accuracy', filename=self.comparisons_directory + 'acc_comparison.eps', ylims=[0,1])
+       
+        acc_analysis.plot(names = ['Supervise Acc.','DAgger'], label='Accuracy', filename=self.comparisons_directory + 'acc_comparison.eps', ylims=[0,1])
         
         loss_analysis = Analysis(H, W, self.ITER, rewards=rewards, sinks=sinks, desc="Loss plot")
         loss_analysis.get_perf(classic_il_loss)
-        loss_analysis.get_perf(dagger_loss)
+        
 
-        loss_analysis.plot(names = ['Supervise loss', 'DAgger loss'], label='Loss', filename=self.comparisons_directory + 'loss_plot.eps', ylims=[0, 1])
+        loss_analysis.plot(names = ['Supervise loss','DAgger'], label='Loss', filename=self.comparisons_directory + 'loss_plot.eps', ylims=[0, 1])
 
         test_loss_analysis = Analysis(H, W, self.ITER, rewards=rewards, sinks=sinks, desc='Sup Loss plot')
         test_loss_analysis.get_perf(classic_il_test_loss)
-        test_loss_analysis.get_perf(dagger_test_loss)
+      
 
-        test_loss_analysis.plot(names = ['Supervise Test Loss', 'DAgger Test loss'], label='Test Loss', filename=self.comparisons_directory + 'test_loss_plot.eps', ylims=[0, 1])
+        test_loss_analysis.plot(names = ['Supervise Test Loss','DAgger'], label='Test Loss', filename=self.comparisons_directory + 'test_loss_plot.eps', ylims=[0, 1])
         
         
         return
@@ -176,7 +172,7 @@ if __name__ == '__main__':
     #SAMP = 15
     
     # partial trial (several hours when number of scenarios is limited)
-    ITER = 7
+    ITER = 8
     #TRIALS = 10
     #SAMP = 10
 
@@ -211,7 +207,7 @@ if __name__ == '__main__':
             if filename.endswith('.p'):
                 policy = 'policies/rand2d_linear_noisy6_' + str(filename)                            # path to optimal policy: convention for policy paths is 'policies/[description] + [scenario name]'
                 scenario = random_scen.load('scenarios_sparse2d/' + filename)
-                test = RandomTest('revisited/init_full/6/' + filename, 40, ITER, TRIALS, SAMP,INTIT_TEST)      # (ignore '40'), first parameter is where data/plots are saved within ./comparisons/
+                test = RandomTest('revisited/feb16/6/' + filename, 40, ITER, TRIALS, SAMP,INTIT_TEST)      # (ignore '40'), first parameter is where data/plots are saved within ./comparisons/
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)
