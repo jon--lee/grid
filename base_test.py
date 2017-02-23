@@ -89,7 +89,9 @@ class BaseTest():
     def init_trial(self, mdp, learner,eps):
         mdp.load_policy(self.policy)
         sup = ScikitSupervise(self.grid, mdp, self.value_iter_pi, classifier=learner, moves=self.moves, super_pi_actual=None)
+        # sup.super_pi.EPS = np.random.choice(np.linspace(0.0, 1.0, 10.0))#eps
         sup.super_pi.EPS = eps
+
         value_iter_r = np.zeros(self.ITER)
         classic_il_r = np.zeros(self.ITER)
         eps_played = np.zeros(self.ITER)

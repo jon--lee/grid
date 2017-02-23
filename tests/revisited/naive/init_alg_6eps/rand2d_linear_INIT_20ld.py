@@ -175,7 +175,7 @@ if __name__ == '__main__':
     #SAMP = 15
     
     # partial trial (several hours when number of scenarios is limited)
-    ITER = 8
+    ITER = 4
     #TRIALS = 10
     #SAMP = 10
 
@@ -185,7 +185,7 @@ if __name__ == '__main__':
     #SAMP = 2
 
     # specify settings (i.e. you can add moves = [30, 70] to get tests with 30 and 70 moves)
-    ld_set = [10]    # (limit_data) number of trajectories per iteration added to dataset
+    ld_set = [20]    # (limit_data) number of trajectories per iteration added to dataset
     #d_set = [-1, 4]    # depth of decision tree (-1 for LinearSVC)
     #moves = [70]    # number of steps in each trajectory
     
@@ -204,13 +204,13 @@ if __name__ == '__main__':
     for i, filename in enumerate(sorted(os.listdir('scenarios_sparse2d/'))):    
         print filename 
         print i                     # path to pickled scenarios to test on
-        if i >= 40:                                                                                    # in case you want to only test on subset of scenarios (recommended because faster)
+        if i >= 20:                                                                                    # in case you want to only test on subset of scenarios (recommended because faster)
             break
         for i in range(len(params)):
             if filename.endswith('.p'):
                 policy = 'policies/rand2d_linear_noisy6_' + str(filename)                            # path to optimal policy: convention for policy paths is 'policies/[description] + [scenario name]'
                 scenario = random_scen.load('scenarios_sparse2d/' + filename)
-                test = RandomTest('revisited/feb19_sweep_no_flag/6/' + filename, 40, ITER, TRIALS, SAMP,INTIT_TEST)      # (ignore '40'), first parameter is where data/plots are saved within ./comparisons/
+                test = RandomTest('revisited/feb19_naive/6/' + filename, 40, ITER, TRIALS, SAMP,INTIT_TEST)      # (ignore '40'), first parameter is where data/plots are saved within ./comparisons/
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)

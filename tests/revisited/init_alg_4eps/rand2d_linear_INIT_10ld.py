@@ -13,7 +13,7 @@ import plot_class
 import random
 import scenarios
 from gridworld import HighVarInitStateGrid, LowVarInitStateGrid, Grid
-from policy import NoisyPolicy6 as EpsPolicy         # type of policy (plain, noisy, etc.)
+from policy import NoisyPolicy4 as EpsPolicy         # type of policy (plain, noisy, etc.)
 import numpy as np
 from mdp import ClassicMDP
 import random_scen
@@ -204,13 +204,13 @@ if __name__ == '__main__':
     for i, filename in enumerate(sorted(os.listdir('scenarios_sparse2d/'))):    
         print filename 
         print i                     # path to pickled scenarios to test on
-        if i >= 40:                                                                                    # in case you want to only test on subset of scenarios (recommended because faster)
+        if i >= 20:                                                                                    # in case you want to only test on subset of scenarios (recommended because faster)
             break
         for i in range(len(params)):
             if filename.endswith('.p'):
-                policy = 'policies/rand2d_linear_noisy6_' + str(filename)                            # path to optimal policy: convention for policy paths is 'policies/[description] + [scenario name]'
+                policy = 'policies/rand2d_linear_noisy4_' + str(filename)                            # path to optimal policy: convention for policy paths is 'policies/[description] + [scenario name]'
                 scenario = random_scen.load('scenarios_sparse2d/' + filename)
-                test = RandomTest('revisited/feb19_sweep_no_flag/6/' + filename, 40, ITER, TRIALS, SAMP,INTIT_TEST)      # (ignore '40'), first parameter is where data/plots are saved within ./comparisons/
+                test = RandomTest('revisited/feb16/4/' + filename, 40, ITER, TRIALS, SAMP,INTIT_TEST)      # (ignore '40'), first parameter is where data/plots are saved within ./comparisons/
                 print "Param " + str(i) + " of " + str(len(params))
                 param = list(params[i])
                 param.append(scenario)
