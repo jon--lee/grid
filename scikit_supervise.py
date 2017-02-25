@@ -122,9 +122,9 @@ class ScikitSupervise():
             self.comp_eps_traj = []
 
             # self.super_pi.EPS = np.random.choice(np.linspace(0.0, 1.0, 10.0))#eps
-            self.super_pi.EPS = eps
-            # if(eps < 0.15):
-               # self.update_model = False
+            #self.super_pi.EPS = eps
+            #if(eps < 0.15):
+            #    self.update_model = False
 
         return self.super_pi.EPS
         

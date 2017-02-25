@@ -28,6 +28,7 @@ class ScikitBetaDagger():
         self.reward = np.zeros(self.moves)
         self.mistakes = 0
         sup_count = 0
+        print "\t\tEPS: " + str(self.super_pi.EPS)
         for t in range(self.moves):
             if self.record:
                 actual_action = self.super_pi.get_actual_next(self.mdp.state)
@@ -40,10 +41,13 @@ class ScikitBetaDagger():
 
             if random.random() < beta:          # choose supervisor's action
                 sup_count += 1
+                tmp_eps = self.super_pi.EPS
+                self.super_pi.EPS = 0.0
                 tmp_pi = self.mdp.pi
                 self.mdp.pi = self.super_pi
                 a_t = self.grid.step(self.mdp)
                 self.mdp.pi = tmp_pi
+                self.super_pi.EPS = tmp_eps
             else:                               # go with agent's action
                 a_t = self.grid.step(self.mdp)
 
@@ -51,6 +55,7 @@ class ScikitBetaDagger():
 
             # self.reward[t] = self.grid.reward(x_t, a_t, x_t_1)
             # self.recent_rollout_states.append(self.mdp.state)
+        print "\t\tAfter eps: " + str(self.super_pi.EPS)
         print "\t\tExpected beta: " + str(beta)
         print "\t\tEmpirical beta: " + str(sup_count / float(self.moves))
 

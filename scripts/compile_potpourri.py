@@ -12,20 +12,30 @@ import IPython
 #                        'compilations/beta_sweep_dt/dagger_0.0beta.npy']
 # svm_comparison_names = ['compilations/eps_sweep/supervise_0.0eps.npy', 'compilations/eps_sweep/supervise_0.5eps.npy',
 #                     'compilations/beta_sweep/dagger_0.1beta.npy']
-"""dt_comparison_names = ['compilations/dart_sweep_10ld/supervise_.3eps.npy',
-        'compilations2/dart_sweep_10ld/supervise_.4eps.npy',
-        'compilations2/dart_sweep_10ld/supervise_.5eps.npy',
-        'compilations2/dart_sweep_10ld/supervise_.6eps.npy',
-        'compilations2/dart_sweep_10ld/supervise_.7eps.npy',
-        'compilations2/dart_sweep_10ld/supervise_.8eps.npy',
+dt_comparison_names = [#'compilations/svm_naive_sweep_20ld/supervise_.3eps.npy',
+        'compilations2/potpourri10/5050_10ld.npy',        
+        'compilations2/potpourri10/supervise_10ld.npy',        
+        'compilations2/potpourri10/dagger_10ld.npy',        
+        'compilations2/potpourri10/dart_.4eps_10ld.npy',
+        'compilations2/potpourri10/dart_.5eps_10ld.npy',
+        #'compilations2/potpourri/dart_.6eps_10ld.npy',
+        #'compilations/svm_sweep_20ld/supervise_.3eps.npy',
+        #'compilations/svm_sweep_20ld/supervise_.4eps.npy',
+        #'compilations/svm_sweep_20ld/supervise_.5eps.npy',
+        #'compilations/svm_sweep_20ld/supervise_.6eps.npy',
+        #'compilations/svm_sweep_20ld/supervise_.7eps.npy',
+        #'compilations/svm_sweep_20ld/supervise_.8eps.npy',
         ]
-   """
-names = ['.3 eps.', '.4', '.5', '.6', '.7', '.8']
+        
+names = ['Hybrid', 'Supervise', 'DAgger', 'DART 0.4', 'DART 0.5']
 all_sups = [np.load(name) for name in dt_comparison_names]
-colors = ['blue', 'green', 'red', 'orange', 'magenta', 'purple']
+#colors = ['steelblue'] * 6 + ['orange'] * 6
+# colors = ['blue', 'green', 'red', 'orange', 'magenta', 'purple']
+colors = ['#2D3956', '#49679E', '#A0B2D8', '#FCB716', '#F68B20']
+
 plots = []
 
-figure = plt.subplots(figsize=(15, 10))
+figure = plt.subplots()
 for data, color, name in zip(all_sups, colors, dt_comparison_names):
     print name
     mean = np.mean(data, axis=0)
@@ -42,5 +52,5 @@ mini = max(np.min(all_sups), 0.0)
 plt.ylim(mini, 1)
 plt.xlabel('Iterations')
 plt.legend(plots, names, loc='upper center',prop={'size':12}, bbox_to_anchor=(.5, 1.12), fancybox=True, ncol=len(names))
-plt.savefig('compilations/tmp.eps', format='eps', dpi=1000)
+plt.savefig('compilations2/tmp.eps', format='eps', dpi=1000)
 plt.show()

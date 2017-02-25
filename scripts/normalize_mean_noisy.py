@@ -3,10 +3,10 @@ import IPython
 import matplotlib.pyplot as plt
 import os
 
-base_dir = 'comparisons/revisited/feb19_sweep_no_flag/6'
+base_dir = 'comparisons/revisited/feb23/0'
 # base_dir = 'comparisons/revisited/feb19_sweep_no_flag/3/'
 ref_root = 'comparisons/random2d_deter_sparse_linear'
-substr = '_10ld_3d_70m_0.0pb_data'
+substr = '_20ld_-1d_70m_0.0pb_data'
 ref_substr = '_1ld_-1d_70m_data'
 
 
@@ -41,8 +41,8 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
     se_dagger = np.std(dagger_data, axis=0) / np.sqrt(dagger_data.shape[0])
 
     # save the normalized data for comparisons with others if needed
-    #np.save('compilations/svm_naive_sweep_20ld/supervise_.3eps.npy', classic_il_data)
-    #np.save('compilations/svm_6init/dagger_1ld.npy', dagger_data)
+    np.save('compilations2/potpourri20/supervise_20ld.npy', classic_il_data)
+    #np.save('compilations2/potpourri20/dagger_20ld.npy', dagger_data)
     
     x1 = range(len(mean_classic_il))
     x2 = range(len(mean_dagger))
@@ -59,7 +59,7 @@ def plot(classic_il_data, dagger_data, label='Reward', filename='tmp.eps'):
     #mini = max(np.min(all_sups), 0.0)
     #plt.ylim(mini, 1)
 
-    plt.ylim(0.2, .7)
+    plt.ylim(0, 1)
     plt.ylabel(label)
     plt.xlabel('Iterations')
     names = ['Supervised Learning', 'DAgger']
